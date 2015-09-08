@@ -13,6 +13,6 @@ git submoudle init
 ```
 3- Build your desired image by `cd <image>` the make
 ```base
-cd ./ubuntu10.04
+cd ./images/ubuntu10.04
 make
 ```
