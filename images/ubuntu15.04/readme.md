@@ -1,4 +1,17 @@
+# Ubuntu 15.04
+To build the jumpscale/ubuntu:15.04 image just do
+```bash
+make
+```
 
+This image contains the following:
+- Working sshd (root password: `js007`)
+- Working jumpscale7 installation
+- jumpscale ays redis package pre installed
+- mc, git, python2.7, curl, wget and tmux are pre-installed
+- image auto starts `@ys` on start
+
+#### Original specs
 - create docker file to
 - install ubuntu 15.04
 - make sure ssh is installed
