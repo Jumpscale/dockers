@@ -11,7 +11,7 @@ has ssh and the needed essential services.
 cd dockers
 git submoudle init
 ```
-- Build your desired image by `cd <image>` the make
+- Build your desired image by `cd <image>` then make
 ```base
 cd ./images/ubuntu10.04
 make
