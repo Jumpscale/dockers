@@ -1,5 +1,5 @@
 NAME = jumpscale/ubuntu
-VERSION = 15.04
+VERSION = 15.10
 CONTEXT = /tmp/$(NAME)-$(VERSION)
 BASEIMAGE = ../../baseimage/image
 
