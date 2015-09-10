@@ -1,4 +1,4 @@
-> Work In Progress
+Full documentation [here](http://gig.gitbooks.io/jumpscale/content/Howto/How%20To%20Use%20Docker.html) 
 
 # Dockers
 Project contains all the `Dockerfile`s and `Makefile`s needed to build a preinstalled jumpscale ubuntu images that
