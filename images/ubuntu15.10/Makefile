@@ -11,6 +11,7 @@ build: clean prepare
 	docker build -t $(NAME):$(VERSION) --rm $(CONTEXT)
 
 prepare:
+	git submodule update --init
 	mkdir -p $(CONTEXT)
 	cp -r $(BASEIMAGE)/* $(CONTEXT)/
 	cp -r ../../runit $(CONTEXT)/
