@@ -15,14 +15,18 @@ RUN rm /etc/service/sshd/down
 RUN dpkg-reconfigure openssh-server
 
 #Set default login password
-RUN echo root:js007 | chpasswd
+RUN echo root:gig1234 | chpasswd
 
 RUN apt-get update
 RUN apt-get install -y mc git python2.7 wget curl tmux
+RUN apt-get upgrade
 
 #Install jumpscale
+RUN export JSBRANCH = ays_unstable
+RUN export AYSBRANCH = ays_unstable
 RUN cd /tmp && rm -f install.sh && curl -k https://raw.githubusercontent.com/Jumpscale/jumpscale_core7/master/install/install.sh > install.sh && bash install.sh
-
+RUN cd /opt/code/github/jumpscale/jumpscale_core7;git remote set-url origin git@github.com:Jumpscale/jumpscale_core7.git
+RUN cd /opt/code/github/jumpscale/ays_jumpscale7;git remote set-url origin git@github.com:Jumpscale/ays_jumpscale7.git
 #Install runit ays service
 ADD runit/ays /etc/service/ays
 
