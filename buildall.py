@@ -27,7 +27,7 @@ class DockerBuilder():
 
 
     def ask(self):
-        self.todo=j.console.askChoiceMultiple(self.todo, descr=None, sort=False) #do not sort
+        self.todo=j.console.askChoiceMultiple(self.todo, descr="Please select dockers you want to build & push.", sort=False) #do not sort
         self.build()
 
     def build(self):
