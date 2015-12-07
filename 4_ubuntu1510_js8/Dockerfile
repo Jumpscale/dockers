@@ -2,7 +2,9 @@ FROM jumpscale/ubuntu1510_python3
 
 MAINTAINER JumpScale
 
+ADD ../scripts /bd_build
 ADD . /bd_build
+
 
 ENV HOME /root/
 

@@ -1,4 +1,8 @@
-FROM jumpscale/ubuntu1504
+FROM jumpscale/ubuntu1510
+
+ADD ../scripts /bd_build
+ADD . /bd_build
+
 
 MAINTAINER JumpScale
 
