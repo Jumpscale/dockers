@@ -13,5 +13,8 @@ cd ..
 rm -rf etcd-v2.2.2-linux-amd64
 rm -f etcd-v2.2.2-linux-amd64.tar.gz
 
-mkdir /etc/service/etcd
-cp /code/services/etcd/etcd.runit /etc/service/etcd/run
+mkdir -p /build/etcd
+cp /usr/bin/etcd* /build/etcd/
+
+#mkdir /etc/service/etcd
+#cp /code/services/1_etcd/etcd.runit /etc/service/etcd/run
