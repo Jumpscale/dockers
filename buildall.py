@@ -5,7 +5,7 @@ class DockerBuilder():
         self.homepath=j.sal.fs.getcwd()
         self.logpath=self.homepath+"/build.log"
         self.errpath=self.homepath+"/errorlast.txt"
-        j.do.delete(self.logpath)
+        #j.do.delete(self.logpath)
         j.do.delete(self.errpath)
         self.todo=[]
         self.push=True
@@ -45,7 +45,8 @@ class DockerBuild():
 
 
     def log(self,msg):
-        msg="%-20s %s\n"%(self.name,msg)
+        ttime=j.tools.time.getLocalTimeHR()
+        msg="%-20s %-20s %s\n"%(ttime,self.name,msg)
         j.sal.fs.writeFile(filename=self.builder.logpath,contents=msg,append=True)
 
     def build(self):
