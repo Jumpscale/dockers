@@ -1,0 +1,1 @@
+docker build -t jumpscale/ubuntu1504 .

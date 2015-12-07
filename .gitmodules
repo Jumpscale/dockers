@@ -1,3 +1,0 @@
-[submodule "baseimage"]
-	path = baseimage
-	url = https://github.com/phusion/baseimage-docker.git
