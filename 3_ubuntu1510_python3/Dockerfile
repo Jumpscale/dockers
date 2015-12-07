@@ -2,7 +2,7 @@ FROM jumpscale/ubuntu1510
 
 MAINTAINER JumpScale
 
-ADD ../scripts /bd_build
+#ADD ../scripts /bd_build
 ADD . /bd_build
 
 

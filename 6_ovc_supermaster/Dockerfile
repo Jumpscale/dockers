@@ -11,7 +11,7 @@ MAINTAINER JumpScale
 # Agentcontroller ports
 #EXPOSE 8966
 
-ADD ../scripts /bd_build
+#ADD ../scripts /bd_build
 ADD . /bd_build
 
 RUN /bd_build/prepare.sh && \

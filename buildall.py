@@ -7,11 +7,9 @@ class DockerBuilder():
         self.errpath=self.homepath+"/errorlast.txt"
         j.do.delete(self.logpath)
         j.do.delete(self.errpath)
-
-        self._load()
         self.todo=[]
-
-        self.push=True        
+        self.push=True
+        self._load()
 
     def _load(self):
         items=j.sal.fs.listDirsInDir(self.homepath,False,True)
@@ -21,18 +19,19 @@ class DockerBuilder():
                 continue
             if item.startswith("_"):
                 continue
-            name=item.split("_",1)[1].strip().lower()
-            path=j.sal.fs.joinPaths(homepath,item)
-           self.todo += DockerBuild(self,name,path)
+            if item.find("_")!=-1:
+                name=item.split("_",1)[1].strip().lower()
+                path=j.sal.fs.joinPaths(self.homepath,item)
+                self.todo.append( DockerBuild(self,name,path))
 
 
     def ask(self):
-        self.todo=j.console.askChoiceMultiple(self.todo, descr="Please select dockers you want to build & push.", sort=False) #do not sort
+        self.todo=j.tools.console.askChoiceMultiple(self.todo, descr="Please select dockers you want to build & push.", sort=False) #do not sort
         self.build()
 
     def build(self):
         for docker in self.todo:
-            docker.build())        
+            docker.build()        
 
 
 
@@ -52,14 +51,15 @@ class DockerBuild():
     def build(self):
         if j.sal.fs.exists(path=self._pathPythonBuild):
             self.log("Python Build")
-            cmd="cd %s;python build.py %s"%self.name
+            cmd="cd %s;python build.py %s"%(self.path, self.name)
         else:
             self.log("std docker build")
-            cmd="cd %s;docker build -t jumpscale/%s ."%self.name
-        rc,out=j.do.execute(cmd,die=False)
+            cmd="cd %s;docker build -t jumpscale/%s ."%(self.path,self.name)
+        rc,out=j.do.execute(cmd,dieOnNonZeroExitCode=False)
         if rc>0:
             j.sal.fs.writeFile(filename=self.builder.errpath,contents=out)
             self.log("BUILD IN ERROR")
+            raise RuntimeError("could not build")
         else:
             self.log("build ok")
         if self.builder.push:
@@ -67,12 +67,13 @@ class DockerBuild():
 
 
     def push(self):
-        cmd="docker push %s"%self.name
-        rc,out=j.do.execute(cmd,die=False)
+        cmd="docker push jumpscale/%s"%self.name
+        rc,out=j.do.execute(cmd,dieOnNonZeroExitCode=False)
         if rc>0:
             self.log("push")
             j.sal.fs.writeFile(filename=self.builder.errpath,contents=out)
             self.log("coud not push (ERROR)")
+            raise RuntimeError("could not push")
         else:
             self.log("push ok")
 
