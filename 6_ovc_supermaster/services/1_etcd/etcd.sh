@@ -24,6 +24,6 @@ git checkout v2.2.2
 
 go get -d .
 
-CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags "-s -X ${REPO_PATH}/version.GitSHA ${GIT_SHA}" -o /build/etcd/etcd .
+CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags "-s -X ${REPO_PATH}/version.GitSHA=v2.2.2" -o /build/etcd/etcd .
 
 cp /code/services/1_etcd/Dockerfile /build/etcd

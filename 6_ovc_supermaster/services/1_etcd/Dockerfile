@@ -2,7 +2,7 @@ FROM scratch
 
 MAINTAINER GreenITGlobe
 
-COPY etcd /app/vulcand
+COPY etcd /app/etcd
 
 ENV PATH=/app:$PATH
 
