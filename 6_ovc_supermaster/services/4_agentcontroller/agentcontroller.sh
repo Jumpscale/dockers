@@ -1,19 +1,29 @@
 #!/bin/bash
 set -e
 source /code/buildconfig
+source /code/goconfig.sh
 set -x
 
+export GOPATH=/tmp/agentcontroller2gopath
+
 #change this to build @todo (*1*), do agent too
-cd /tmp
-curl -L https://git.aydo.com/binary/agentcontroller2/repository/archive.tar.gz -o agentcontroller2.tar.gz
-tar xzvf agentcontroller2.tar.gz
-cd agentcontroller2.git
-rm -rf /usr/bin/agentcontroller2
-mv -f agentcontroller2 /usr/bin/
-rm /usr/bin/agentcontroller2/agentcontroller2.toml
-cd ..
-rm -rf agentcontroller2.git
-rm -f agentcontroller2.tar.gz
+
+if [ -d $GOPATH/src/github.com/Jumpscale/agentcontroller2 ]; then
+  cd $GOPATH/src/github.com/Jumpscale/agentcontroller2 && git pull
+else
+  if [ ! -d $GOPATH/src/github.com/Jumpscale ]; then
+    mkdir -p $GOPATH/src/github.com/Jumpscale
+  fi
+  cd $GOPATH/src/github.com/Jumpscale && git clone https://github.com/Jumpscale/agentcontroller2.git
+fi
+cd $GOPATH/src/github.com/Jumpscale/agentcontroller2
+
+go get -u github.com/tools/godep
+godep restore
+godep go install
+
+
+mv -f $GOPATH/bin/agentcontroller2 /usr/bin/
 cp -f /code/services/4_agentcontroller/agentcontroller.toml /etc/agentcontroller.toml
 
 #mkdir /etc/service/agentcontroller
