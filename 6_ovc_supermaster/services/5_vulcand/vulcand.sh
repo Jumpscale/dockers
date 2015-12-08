@@ -12,7 +12,7 @@ fi
 go get -d github.com/vulcand/vulcand
 
 cd $GOPATH/src/github.com/vulcand/vulcand
-CGO_ENABLED=0 go build -a -installsuffix nocgo .
+CGO_ENABLED=0 go build -a -ldflags '-s' -installsuffix nocgo .
 
 mkdir -p /build/vulcand
 cp $GOPATH/bin/vulcand /build/vulcand/
