@@ -3,18 +3,27 @@ set -e
 source /code/buildconfig
 set -x
 
-cd /tmp
-curl -L  https://github.com/coreos/etcd/releases/download/v2.2.2/etcd-v2.2.2-linux-amd64.tar.gz -o etcd-v2.2.2-linux-amd64.tar.gz
-tar xzvf etcd-v2.2.2-linux-amd64.tar.gz
-cd etcd-v2.2.2-linux-amd64
-mv etcd /usr/bin/
-mv etcdctl /usr/bin/
-cd ..
-rm -rf etcd-v2.2.2-linux-amd64
-rm -f etcd-v2.2.2-linux-amd64.tar.gz
+
+
+ORG_PATH="github.com/coreos"
+REPO_PATH="${ORG_PATH}/etcd"
+
+export GOPATH=/tmp/etcdgopath
+
+if [ ! -d $GOPATH ]; then
+    mkdir -p $GOPATH
+fi
+
 
 mkdir -p /build/etcd
-cp /usr/bin/etcd* /build/etcd/
 
-#mkdir /etc/service/etcd
-#cp /code/services/1_etcd/etcd.runit /etc/service/etcd/run
+go get -du github.com/coreos/etcd
+
+cd $GOPATH/src/$REPO_PATH
+git checkout v2.2.2
+
+go get -d .
+
+CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags "-s -X ${REPO_PATH}/version.GitSHA ${GIT_SHA}" -o /build/etcd/etcd .
+
+cp /code/services/1_etcd/Dockerfile /build/etcd
