@@ -1,4 +1,0 @@
-#!/bin/sh
-set -e
-sv start etcd || exit 1
-exec skydns

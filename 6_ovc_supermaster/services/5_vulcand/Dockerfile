@@ -2,6 +2,6 @@ FROM scratch
 
 MAINTAINER GreenITGlobe
 
-COPY vulcand /vulcand/vulcand
+COPY vulcand /
 
-ENTRYPOINT ["/vulcand/vulcand"]
+ENTRYPOINT ["/vulcand"]
