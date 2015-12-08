@@ -9,11 +9,11 @@ if [ ! -d $GOPATH]; then
     mkdir -p $GOPATH
 fi
 
-go get github.com/vulcand/vulcand
+go get -d github.com/vulcand/vulcand
+
+cd $GOPATH/src/github.com/vulcand/vulcand
+CGO_ENABLED=0 go build -a -installsuffix nocgo .
 
 mkdir -p /build/vulcand
 cp $GOPATH/bin/vulcand /build/vulcand/
-
-
-#mkdir /etc/service/skydns
-#cp /code/services/skydns/skydns.runit /etc/service/skydns/run
+cp /code/services/5_vulcand/Dockerfile /build/vulcand
