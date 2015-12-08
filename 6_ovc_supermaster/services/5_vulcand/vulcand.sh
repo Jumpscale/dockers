@@ -5,7 +5,7 @@ set -x
 
 export GOPATH=/tmp/vulcandgopath
 
-if [ ! -d $GOPATH]; then
+if [ ! -d $GOPATH ]; then
     mkdir -p $GOPATH
 fi
 
@@ -20,5 +20,5 @@ GOOS=linux go build -a -tags netgo -installsuffix cgo -ldflags '-w' -o ./vbundle
 mkdir -p /build/vulcand
 cp $GOPATH/src/github.com/vulcand/vulcand/vulcand /build/vulcand/
 cp $GOPATH/src/github.com/vulcand/vulcand/vctl/vctl /build/vulcand/
-cp $GOPATH/src/github.com/vulcand/vulcand/vctl/vbundle /build/vulcand/
+cp $GOPATH/src/github.com/vulcand/vulcand/vbundle/vbundle /build/vulcand/
 cp /code/services/5_vulcand/Dockerfile /build/vulcand
