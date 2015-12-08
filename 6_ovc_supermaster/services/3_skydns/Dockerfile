@@ -2,6 +2,6 @@ FROM scratch
 
 MAINTAINER GreenITGlobe
 
-COPY etcd /app/etcd
+COPY skydns /app/skydns
 
 ENTRYPOINT ["/app/etcd"]
