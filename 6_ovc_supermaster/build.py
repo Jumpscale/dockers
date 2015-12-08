@@ -18,5 +18,3 @@ for item in items:
     name=item.split("_",1)[1]
     d.cuisine.run("bash /code/services/%s/%s.sh"%(item,name))
 
-from IPython import embed
-embed()
