@@ -17,7 +17,7 @@ fi
 
 mkdir -p /build/etcd
 
-go get -du github.com/coreos/etcd
+go get -d -u github.com/coreos/etcd
 
 cd $GOPATH/src/$REPO_PATH
 git checkout v2.2.2
