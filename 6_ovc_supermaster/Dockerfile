@@ -2,26 +2,25 @@ FROM jumpscale/ubuntu1510_golang
 
 MAINTAINER JumpScale
 
-# etcd ports
-#EXPOSE 2379 2380
+COPY buildconfig /code/buildconfig
+COPY cleanup.sh /code/cleanup.sh
 
-# skydns ports
-#EXPOSE 53
+COPY services/1_etcd /code/services/1_etcd
+RUN /code/services/1_etcd/etcd.sh
 
-# Agentcontroller ports
-#EXPOSE 8966
+COPY services/2_redis /code/services/2_redis
+RUN /code/services/2_redis/redis.sh
 
-#ADD ../scripts /bd_build
-ADD . /bd_build
+COPY services/3_skydns /code/services/3_skydns
+RUN /code/services/3_skydns/skydns.sh
 
-RUN /bd_build/prepare.sh && \
-	/bd_build/system_services.sh && \
-	/bd_build/utilities.sh && \
-	/bd_build/cleanup.sh
+COPY services/4_agentcontroller /code/services/4_agentcontroller
+RUN /code/services/4_agentcontroller/agentcontroller.sh
 
-ENV HOME /root/
+COPY services/5_vulcand /code/services/5_vulcand
+RUN /code/services/5_vulcand/vulcand.sh
 
-VOLUME /data/db
-VOLUME /tmp
 
-CMD ["/sbin/my_init"]
+RUN /code/cleanup.sh
+
+VOLUME /opt/build

@@ -1,4 +1,0 @@
-#!/bin/sh
-set -e
-chown -R redis /data/db
-exec /sbin/setuser redis redis-server /etc/redis/redis.conf

@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 source /code/buildconfig
-source /code/goconfig.sh
 set -x
 
 export GOPATH=/tmp/agentcontroller2gopath
@@ -36,5 +35,3 @@ mkdir /build/agentcontroller
 #TODO: Commented out the next line since it fails
 #cp /user/agent* /build/agentcontroller/
 cp /code/services/4_agentcontroller/agentcontroller.toml /build/agentcontroller/
-
-

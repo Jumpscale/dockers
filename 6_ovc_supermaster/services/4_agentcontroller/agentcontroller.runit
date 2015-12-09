@@ -1,6 +1,0 @@
-#!/bin/sh
-set -e
-
-sv start redis || exit 1
-
-exec envdir /usr/bin/agentcontroller2 agentcontroller2 -c agentcontroller.toml
