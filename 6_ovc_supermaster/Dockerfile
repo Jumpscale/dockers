@@ -3,7 +3,6 @@ FROM jumpscale/ubuntu1510_golang
 MAINTAINER JumpScale
 
 COPY buildconfig /code/buildconfig
-COPY cleanup.sh /code/cleanup.sh
 
 COPY services/1_etcd /code/services/1_etcd
 RUN /code/services/1_etcd/etcd.sh
@@ -21,6 +20,7 @@ COPY services/5_vulcand /code/services/5_vulcand
 RUN /code/services/5_vulcand/vulcand.sh
 
 
+COPY cleanup.sh /code/cleanup.sh
 RUN /code/cleanup.sh
 
 VOLUME /opt/build

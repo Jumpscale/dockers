@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-source /bd_build/buildconfig
+source /code/buildconfig
 set -x
 
 apt-get clean

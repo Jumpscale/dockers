@@ -18,6 +18,8 @@ fi
 cd $GOPATH/src/github.com/Jumpscale/agentcontroller2
 
 go get -u github.com/tools/godep
+export PATH=$PATH:$GOPATH/bin
+
 godep restore
 godep go install
 
