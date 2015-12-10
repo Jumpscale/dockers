@@ -27,3 +27,8 @@ echo root:gig1234 | chpasswd
 
 sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+rm -f /usr/bin/python
+rm -f /usr/bin/python3
+ln -s /usr/bin/python3.5 /usr/bin/python
+ln -s /usr/bin/python3.5 /usr/bin/python3
