@@ -19,6 +19,8 @@ RUN /code/services/4_agentcontroller/agentcontroller.sh
 COPY services/5_vulcand /code/services/5_vulcand
 RUN /code/services/5_vulcand/vulcand.sh
 
+COPY services/6_pxeboot /code/services/6_pxeboot
+RUN /code/services/6_pxeboot/pxeboot.sh
 
 COPY cleanup.sh /code/cleanup.sh
 RUN /code/cleanup.sh
