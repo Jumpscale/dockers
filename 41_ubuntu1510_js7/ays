@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+PATH=$PATH:/usr/local/bin
+
+APP=$(basename $0)
+APPARR=(${APP//@/ })
+if [ ${#APPARR[@]} -eq 2 ]; then
+    APP="-n ${APPARR[0]} -i ${APPARR[1]}"
+elif [ "$APP" != "ays" -a "$APP" != "S20ays" ]; then
+    APP="-n $APP"
+else
+    APP=""
+fi
+
+case $1 in
+    start) ays start $APP;;
+    stop) ays stop $APP;;
+    restart) ays restart $APP;;
+esac
