@@ -9,6 +9,7 @@ class DockerBuilder():
         j.do.delete(self.errpath)
         self.todo=[]
         self.push=True
+        self.debug=False
         self._load()
 
     def _load(self):
@@ -34,7 +35,6 @@ class DockerBuilder():
             docker.build()        
 
 
-
 class DockerBuild():
 
     def __init__(self,builder,name,path):
@@ -42,27 +42,55 @@ class DockerBuild():
         self.name=name
         self.path=path
         self._pathPythonBuild=self.path+"/build.py"
+        
 
 
     def log(self,msg):
-        ttime=j.tools.time.getLocalTimeHR()
+        ttime=j.data.time.getLocalTimeHR()
         msg="%-20s %-20s %s\n"%(ttime,self.name,msg)
+        print (msg)
         j.sal.fs.writeFile(filename=self.builder.logpath,contents=msg,append=True)
 
     def build(self):
+        pythonbuild=False
         if j.sal.fs.exists(path=self._pathPythonBuild):
+            pythonbuild=True
             self.log("Python Build")
-            cmd="cd %s;python build.py %s"%(self.path, self.name)
+            C=j.do.readFile(self._pathPythonBuild)
+            curdir=self.path
+            rc=0
+            out=""
+            locals_={"curdir":curdir}
+            try:
+                # cmd="cd %s;python build.py %s"%(self.path, self.name)
+                res=exec(C,globals(),locals_)
+            except Exception as e:   
+                print(e.with_traceback(e.__traceback__))
+                rc=1
+          
         else:
             self.log("std docker build")
             cmd="cd %s;docker build -t jumpscale/%s ."%(self.path,self.name)
-        rc,out=j.do.execute(cmd,dieOnNonZeroExitCode=False)
+            if self.builder.debug:
+                rc=j.do.executeInteractive(cmd)
+            else:
+                rc,out=j.do.execute(cmd,dieOnNonZeroExitCode=False)
+
         if rc>0:
             j.sal.fs.writeFile(filename=self.builder.errpath,contents=out)
             self.log("BUILD IN ERROR")
             raise RuntimeError("could not build")
         else:
             self.log("build ok")
+
+        if pythonbuild:
+            d=locals_["d"]
+            #d=docker object done in build.py script
+            #commit now
+            name="jumpscale/%s"%self.name
+            self.log("COMMIT:%s"%name)
+            d.commit(name)
+
         if self.builder.push:
             self.push()
 
@@ -86,6 +114,8 @@ class DockerBuild():
 
 
 b=DockerBuilder()
+b.push=False
+b.debug=True
 b.ask()
 
 

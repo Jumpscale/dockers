@@ -1,8 +1,8 @@
 
-# docker image python installed in development mode & all required modules
+# docker image with jumpscale installed
 
 see docker location on docker hub
-- https://hub.docker.com/r/jumpscale/ubuntu1510_python3/
+- https://hub.docker.com/r/jumpscale/ubuntu1510_golang/
 
 std passwd
 - root/gig1234
@@ -13,15 +13,15 @@ easiest way to use (windows & max)
 - install https://www.docker.com/toolbox
 - login using your docker account (create one if you don't have yet)
 - click create
-- look for jumpscale/ubuntu1510_python3
+- look for jumpscale/ubuntu1510_golang
 
 careful the std passwd is now used, use jsdocker for more security (see below)
 
 ## use from jumpscale enabled system
 
 ```
-docker pull jumpscale/ubuntu1510_python3
-jsdocker new -n ubuntu1510_python3 -b jumpscale/ubuntu1510_python3 --start
+docker pull jumpscale/ubuntu1510_golang
+jsdocker new -n golangtest -b jumpscale/ubuntu1510_golang --start
 ```
 
 you can now login with
@@ -31,22 +31,21 @@ ssh localhost -p 9022
 port will change depending nr of dockers on your machine
 
 # to build
-
+make sure jumpscale has been installed on system
 ```
 mkdir -p /opt/code/github/jumpscale
 cd /opt/code/github/jumpscale
-git clone https://github.com/Jumpscale/docker_ubuntu1510_python3.git
-#or
-#git clone git@github.com:Jumpscale/docker_ubuntu1510_python3.git
-sh build_docker.sh
+git clone https://github.com/Jumpscale/dockers.git
+cd dockers/js8
+js buildall.py
 ```
 
 # to push back to the docker hub
 
-we do an autobuild in jumpscale/ubuntu1510_python3 so no real need to do this manually
+we do an autobuild in jumpscale/ubuntu1510_golang so no real need to do this manually
 ```
 docker login
-docker push jumpscale/ubuntu1510_python3
+docker push jumpscale/ubuntu1510_golang
 ```
 
 # remarks

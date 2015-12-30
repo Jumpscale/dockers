@@ -1,7 +1,0 @@
-FROM scratch
-
-MAINTAINER GreenITGlobe
-
-COPY etcd /app/etcd
-
-ENTRYPOINT ["/app/etcd"]

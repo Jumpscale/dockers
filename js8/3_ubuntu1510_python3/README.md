@@ -31,15 +31,16 @@ ssh localhost -p 9022
 port will change depending nr of dockers on your machine
 
 # to build
-
+make sure jumpscale has been installed on system
 ```
 mkdir -p /opt/code/github/jumpscale
 cd /opt/code/github/jumpscale
-git clone https://github.com/Jumpscale/docker_ubuntu1510_python3.git
-#or
-#git clone git@github.com:Jumpscale/docker_ubuntu1510_python3.git
-sh build_docker.sh
+git clone https://github.com/Jumpscale/dockers.git
+cd dockers/js8
+js buildall.py
+#chose this directory
 ```
+
 
 # to push back to the docker hub
 
