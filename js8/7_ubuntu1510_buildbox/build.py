@@ -162,21 +162,17 @@ export PATH=$PATH:$GOPATH/bin
 godep restore
 godep go install
 
-# mv -f $GOPATH/bin/agentcontroller2 /usr/bin/
+mv -f $GOPATH/bin/agentcontroller2 /opt/jumpscale8/bin/
 
 mkdir -p /optvar/cfg/
 cp /bd_build/agentcontroller.toml /optvar/cfg/
 
-# #TODO: Commented out the next line since it fails
-# #cp /user/agent* /build/agentcontroller/
-# cp /code/services/4_agentcontroller/agentcontroller.toml /build/agentcontroller/
-
-# rm -rf $GOPATH
+rm -rf $GOPATH
 
 '''
 
-d.cuisine.run_script(C_ETCD)
-d.cuisine.run_script(C_redis)
-d.cuisine.run_script(C_skydns)
-d.cuisine.run_script(C_vulcand)
-# d.cuisine.run_script(C_agentcontroller)
+# d.cuisine.run_script(C_ETCD)
+# d.cuisine.run_script(C_redis)
+# d.cuisine.run_script(C_skydns)
+# d.cuisine.run_script(C_vulcand)
+d.cuisine.run_script(C_agentcontroller)

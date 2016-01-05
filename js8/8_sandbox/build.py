@@ -13,8 +13,11 @@ PREPARE='''
 set -ex
 cd /opt/code/github/jumpscale/jumpscale_core8
 git checkout .
+echo 1
 git pull
+echo 2
 cd /
+echo 3
 '''
 
 
