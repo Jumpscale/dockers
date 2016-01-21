@@ -1,5 +1,5 @@
 #Dockerfile for https://github.com/Gaff/alpine-sshd
-FROM duportal/rpi-alpine:latest
+FROM dduportal/rpi-alpine:latest
 
 #Build script installs sshd
 COPY build.sh /build.sh
@@ -11,9 +11,9 @@ RUN rm build.sh
 ENV S6_KILL_GRACETIME=500
 
 RUN apk add --update --virtual=build-dependencies wget ca-certificates && \
-    export ALPINE_GLIBC_BASE_URL="https://circle-artifacts.com/gh/andyshinn/alpine-pkg-glibc/6/artifacts/0/home/ubuntu/alpine-pkg-glibc/packages/x86_64" && \
-    export ALPINE_GLIBC_PACKAGE="glibc-2.21-r2.apk" && \
-    export ALPINE_GLIBC_BIN_PACKAGE="glibc-bin-2.21-r2.apk" && \
+    export ALPINE_GLIBC_BASE_URL="https://github.com/leannenorthrop/alpine-pkg-glibc/releases/download/glibc-2.22-r1-armhf-beta/" && \
+    export ALPINE_GLIBC_PACKAGE="glibc-2.22-r1.apk" && \
+    export ALPINE_GLIBC_BIN_PACKAGE="glibc-bin-2.22-r1.apk" && \
     wget "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_PACKAGE" "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_BIN_PACKAGE" && \
     apk add --allow-untrusted "$ALPINE_GLIBC_PACKAGE" "$ALPINE_GLIBC_BIN_PACKAGE" && \
     /usr/glibc/usr/bin/ldconfig "/lib" "/usr/glibc/usr/lib" && \
