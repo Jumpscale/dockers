@@ -20,7 +20,9 @@ export SANDBOX=0
 cd /tmp;rm -f install.sh;curl -k https://raw.githubusercontent.com/Jumpscale/jumpscale_core8/master/install/install.sh > install.sh;bash install.sh
 
 """
-d.cuisine.run_script(JS)
+def js():
+    d.cuisine.run_script(JS)
+j.actions.start(js, runid='ubuntu1510_js8')
 
 # CLEANUP='''
 # #!/bin/bash
@@ -37,4 +39,3 @@ d.cuisine.run_script(JS)
 
 # '''
 # d.cuisine.run_script(CLEANUP)
-
