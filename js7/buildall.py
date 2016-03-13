@@ -56,7 +56,7 @@ class DockerBuild():
         else:
             self.log("std docker build")
             cmd="cd %s;docker build -t jumpscale/%s ."%(self.path,self.name)
-        rc,out=j.do.execute(cmd,dieOnNonZeroExitCode=False)
+        rc,out=j.do.execute(cmd,die=False)
         if rc>0:
             j.sal.fs.writeFile(filename=self.builder.errpath,contents=out)
             self.log("BUILD IN ERROR")
@@ -69,7 +69,7 @@ class DockerBuild():
 
     def push(self):
         cmd="docker push jumpscale/%s"%self.name
-        rc,out=j.do.execute(cmd,dieOnNonZeroExitCode=False)
+        rc,out=j.do.execute(cmd,die=False)
         if rc>0:
             self.log("push")
             j.sal.fs.writeFile(filename=self.builder.errpath,contents=out)
