@@ -17,8 +17,8 @@ set -x
 
 apt-get update
 
-$minimal_apt_get_install libpython3.5-dev python3.5-dev libffi-dev gcc build-essential autoconf libtool pkg-config libpq-dev 
-$minimal_apt_get_install libsqlite3-dev 
+$minimal_apt_get_install libpython3.5-dev python3.5-dev libffi-dev gcc build-essential autoconf libtool pkg-config libpq-dev
+$minimal_apt_get_install libsqlite3-dev
 #$minimal_apt_get_install net-tools sudo
 
 cd /tmp
@@ -89,7 +89,7 @@ pip install psutil
 pip install pytz
 pip install requests
 pip install sqlalchemy
-pip install urllib3 
+pip install urllib3
 pip install zmq
 pip install pyyaml
 pip install websocket
@@ -99,7 +99,9 @@ pip install ujson
 pip install watchdog
 '''
 
-d.cuisine.run_script(C)
+def python_lib():
+    d.cuisine.run_script(C)
+j.actions.start(python_lib, runid='ubuntu1510_python3')
 
 
 CLEANUP='''
@@ -116,7 +118,6 @@ rm -f /etc/dpkg/dpkg.cfg.d/02apt-speedup
 #rm -f /etc/ssh/ssh_host_*
 
 '''
-d.cuisine.run_script(CLEANUP)
-
-
-
+def cleanup():
+    d.cuisine.run_script(CLEANUP)
+j.actions.start(cleanup, runid='ubuntu1510_python3')

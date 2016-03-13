@@ -36,7 +36,9 @@ CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags "-s -X ${REPO_PATH}/versio
 rm -rf $GOPATH
 
 '''
-
+def etcd():
+    d.cuisine.run_script(C_ETCD)
+j.actions.start(etcd, runid='ubuntu1510_buildbox')
 
 
 
@@ -73,7 +75,9 @@ cp /bd_build/redis.conf /optvar/cfg/
 rm -rf /opt/redis
 
 '''
-
+def redis():
+    d.cuisine.run_script(C_redis)
+j.actions.start(redis, runid='ubuntu1510_buildbox')
 
 
 C_skydns='''
@@ -105,6 +109,9 @@ CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags "-s" -o /opt/jumpscale8/bi
 rm -rf $GOPATH
 
 '''
+def skydns():
+    d.cuisine.run_script(C_skydns)
+j.actions.start(skydns, runid='ubuntu1510_buildbox')
 
 
 C_vulcand='''
@@ -135,6 +142,9 @@ cp $GOPATH/src/github.com/vulcand/vulcand/vbundle/vbundle /opt/jumpscale8/bin/
 rm -rf $GOPATH
 
 '''
+def vulcand():
+    d.cuisine.run_script(C_vulcand)
+j.actions.start(vulcand, runid='ubuntu1510_buildbox')
 
 C_agentcontroller='''
 #!/bin/bash
@@ -169,9 +179,6 @@ cp /bd_build/agentcontroller.toml /optvar/cfg/
 rm -rf $GOPATH
 
 '''
-
-# d.cuisine.run_script(C_ETCD)
-# d.cuisine.run_script(C_redis)
-# d.cuisine.run_script(C_skydns)
-# d.cuisine.run_script(C_vulcand)
-d.cuisine.run_script(C_agentcontroller)
+def agentcontroller():
+    d.cuisine.run_script(C_agentcontroller)
+j.actions.start(agentcontroller, runid='ubuntu1510_buildbox')

@@ -58,12 +58,12 @@ class DockerBuild():
 
     def build(self):
         pythonbuild = False
+        rc = 0
         if j.sal.fs.exists(path=self._pathPythonBuild):
             pythonbuild = True
             self.log("Python Build")
             C = j.sal.fs.fileGetContents(self._pathPythonBuild)
             curdir = self.path
-            rc = 0
             out = ""
             locals_ = {"curdir": curdir}
             try:
@@ -81,17 +81,18 @@ class DockerBuild():
             except:
                 j.sal.fs.writeFile(filename=self.builder.errpath, contents=output)
                 self.log("BUILD IN ERROR")
+                rc = 1
                 raise RuntimeError("could not build")
 
-        if pythonbuild:
+        if pythonbuild and rc == 0:
             d = locals_["d"]
             # d=docker object done in build.py script
             # commit now
             name = "jumpscale/%s" % self.name
             self.log("COMMIT:%s" % name)
-            d.commit(name)
+            d.commit(name, delete=True, force=True)
 
-        if self.builder.push:
+        if self.builder.push and rc == 0:
             self.push()
 
     def push(self):
