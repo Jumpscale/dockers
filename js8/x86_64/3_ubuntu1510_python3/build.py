@@ -100,7 +100,7 @@ pip install watchdog
 '''
 
 def python_lib():
-    d.cuisine.run_script(C)
+    d.cuisine.core.run_script(C)
 j.actions.start(python_lib, runid='ubuntu1510_python3')
 
 
@@ -119,5 +119,5 @@ rm -f /etc/dpkg/dpkg.cfg.d/02apt-speedup
 
 '''
 def cleanup():
-    d.cuisine.run_script(CLEANUP)
+    d.cuisine.core.run_script(CLEANUP)
 j.actions.start(cleanup, runid='ubuntu1510_python3')

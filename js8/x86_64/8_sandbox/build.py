@@ -20,7 +20,7 @@ cd /
 echo 3
 '''
 def prepare():
-    d.cuisine.run_script(PREPARE)
+    d.cuisine.core.run_script(PREPARE)
 j.actions.start(prepare, runid='sandbox')
 
 
@@ -31,7 +31,7 @@ d.addSandboxSource("/usr/bin/rsync")
 d.sandbox()
 '''
 def sandbox():
-    d.cuisine.run_script(SANDBOX)
+    d.cuisine.core.run_script(SANDBOX)
 j.actions.start(sandbox, runid='sandbox')
 
 
@@ -43,5 +43,5 @@ j.do.copyTree("/optvar/","/build/optvar/")
 j.do.delete("/build/opt/jumpscale8/bin/metadata.db")
 """
 def copy():
-    d.cuisine.run_script(copy)
+    d.cuisine.core.run_script(copy)
 j.actions.start(copy, runid='sandbox')

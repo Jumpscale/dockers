@@ -22,5 +22,5 @@ $minimal_apt_get_install golang rsync
 
 """
 def golang():
-    d.cuisine.run_script(GOLANG)
+    d.cuisine.core.run_script(GOLANG)
 j.actions.start(golang, runid='ubuntu1510_golang')

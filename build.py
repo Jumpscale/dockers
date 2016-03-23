@@ -18,5 +18,5 @@ for item in items:
     if item.find("_")==-1:
         continue
     name=item.split("_",1)[1]
-    d.cuisine.run("bash /code/services/%s/%s.sh"%(item,name))
+    d.cuisine.core.run("bash /code/services/%s/%s.sh"%(item,name))
 

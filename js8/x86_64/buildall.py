@@ -82,7 +82,7 @@ class DockerBuild():
                 j.sal.fs.writeFile(filename=self.builder.errpath, contents=output)
                 self.log("BUILD IN ERROR")
                 rc = 1
-                raise RuntimeError("could not build")
+                raise j.exceptions.RuntimeError("could not build")
 
         if pythonbuild and rc == 0:
             d = locals_["d"]
@@ -104,7 +104,7 @@ class DockerBuild():
         except:
             j.sal.fs.writeFile(filename=self.builder.errpath, contents=output)
             self.log("coud not push (ERROR)")
-            raise RuntimeError("could not push")
+            raise j.exceptions.RuntimeError("could not push")
 
     def __str__(self):
         return self.name

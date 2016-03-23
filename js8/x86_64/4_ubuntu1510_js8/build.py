@@ -21,7 +21,7 @@ cd /tmp;rm -f install.sh;curl -k https://raw.githubusercontent.com/Jumpscale/jum
 
 """
 def js():
-    d.cuisine.run_script(JS)
+    d.cuisine.core.run_script(JS)
 j.actions.start(js, runid='ubuntu1510_js8')
 
 # CLEANUP='''
@@ -38,4 +38,4 @@ j.actions.start(js, runid='ubuntu1510_js8')
 # rm -f /etc/ssh/ssh_host_*
 
 # '''
-# d.cuisine.run_script(CLEANUP)
+# d.cuisine.core.run_script(CLEANUP)

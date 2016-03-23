@@ -37,7 +37,7 @@ rm -rf $GOPATH
 
 '''
 def etcd():
-    d.cuisine.run_script(C_ETCD)
+    d.cuisine.core.run_script(C_ETCD)
 j.actions.start(etcd, runid='ubuntu1510_buildbox')
 
 
@@ -76,7 +76,7 @@ rm -rf /opt/redis
 
 '''
 def redis():
-    d.cuisine.run_script(C_redis)
+    d.cuisine.core.run_script(C_redis)
 j.actions.start(redis, runid='ubuntu1510_buildbox')
 
 
@@ -110,7 +110,7 @@ rm -rf $GOPATH
 
 '''
 def skydns():
-    d.cuisine.run_script(C_skydns)
+    d.cuisine.core.run_script(C_skydns)
 j.actions.start(skydns, runid='ubuntu1510_buildbox')
 
 
@@ -143,7 +143,7 @@ rm -rf $GOPATH
 
 '''
 def vulcand():
-    d.cuisine.run_script(C_vulcand)
+    d.cuisine.core.run_script(C_vulcand)
 j.actions.start(vulcand, runid='ubuntu1510_buildbox')
 
 C_agentcontroller='''
@@ -181,5 +181,5 @@ rm -rf $GOPATH
 
 '''
 def agentcontroller():
-    d.cuisine.run_script(C_agentcontroller)
+    d.cuisine.core.run_script(C_agentcontroller)
 j.actions.start(agentcontroller, runid='ubuntu1510_buildbox')
