@@ -154,7 +154,6 @@ set -x
 
 export GOPATH=/tmp/agentcontroller2gopath
 
-#change this to build @todo (*1*), do agent too
 
 if [ -d $GOPATH/src/github.com/Jumpscale/agentcontroller2 ]; then
   cd $GOPATH/src/github.com/Jumpscale/agentcontroller2 && git pull
