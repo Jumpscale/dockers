@@ -11,3 +11,4 @@ RUN /bd_build/build.sh
 
 
 CMD ["/sbin/my_init"]
+CMD ["js 'j.tools.cuisine.local.builder.all()'"]
