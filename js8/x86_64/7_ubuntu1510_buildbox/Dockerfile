@@ -14,3 +14,4 @@ RUN /bd_build/etcd.sh && \
 	/bd_build/agentcontroller.sh
 
 CMD ["/sbin/my_init"]
+CMD ["js 'j.tools.cuisine.local.builder.all()'"]
