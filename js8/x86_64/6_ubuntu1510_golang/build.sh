@@ -5,4 +5,4 @@ set -x
 
 apt-get update
 
-$minimal_apt_get_install golang rsync
+$minimal_apt_get_install golang-go rsync
