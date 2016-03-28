@@ -9,6 +9,7 @@ $minimal_apt_get_install libpython3.5-dev python3.5-dev libffi-dev gcc build-ess
 $minimal_apt_get_install libsqlite3-dev
 $minimal_apt_get_install net-tools sudo
 $minimal_apt_get_install git
+git config http.sslVerify false
 
 cd /tmp
 sudo rm -rf brotli/
