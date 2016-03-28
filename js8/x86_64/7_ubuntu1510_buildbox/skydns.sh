@@ -6,6 +6,7 @@ set -x
 ORG_PATH="github.com/skynetservices"
 REPO_PATH="${ORG_PATH}/skydns"
 
+$minimal_apt_get_install golang
 export GOPATH=/tmp/skydnsdgopath
 
 if [ ! -d $GOPATH ]; then
