@@ -1,6 +1,8 @@
 #!/bin/bash
 
-set -ex
+set -e
+source /bd_build/buildconfig
+set -x
 
 ORG_PATH="github.com/coreos"
 REPO_PATH="${ORG_PATH}/etcd"
