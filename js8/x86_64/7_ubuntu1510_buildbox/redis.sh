@@ -21,7 +21,7 @@ tar xzf redis-3.0.6.tar.gz
 rm -f /usr/local/bin/redis-server
 rm -f /usr/local/bin/redis-cli
 ls
-cd /opt/redis/
+cd /opt/redis/redis-3.0.6/
 ls
 cp /opt/redis/redis-3.0.6/src/redis-server /opt/jumpscale8/bin/
 cp /opt/redis/redis-3.0.6/src/redis-cli /opt/jumpscale8/bin/
