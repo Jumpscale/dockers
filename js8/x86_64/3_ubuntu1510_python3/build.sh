@@ -9,6 +9,8 @@ $minimal_apt_get_install libpython3.5-dev python3.5-dev libffi-dev gcc build-ess
 $minimal_apt_get_install libsqlite3-dev
 $minimal_apt_get_install wget
 $minimal_apt_get_install git
+$minimal_apt_get_install curl
+
 
 
 #DANGEROUS TO RENAME PYTHON
