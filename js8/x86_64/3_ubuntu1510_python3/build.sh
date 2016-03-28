@@ -7,21 +7,7 @@ apt-get update
 
 $minimal_apt_get_install libpython3.5-dev python3.5-dev libffi-dev gcc build-essential autoconf libtool pkg-config libpq-dev
 $minimal_apt_get_install libsqlite3-dev
-$minimal_apt_get_install net-tools sudo
-$minimal_apt_get_install git
-git config http.sslVerify false
-
-cd /tmp
-sudo rm -rf brotli/
-git config http.sslVerify false
-git clone https://github.com/google/brotli.git
-cd /tmp/brotli/
-python setup.py install
-cd tests
-make
-cd ..
-cp /tmp/brotli/tools/bro /usr/local/bin/
-rm -rf /tmp/brotli
+$minimal_apt_get_install wget
 
 #DANGEROUS TO RENAME PYTHON
 #rm -f /usr/bin/python
@@ -35,11 +21,8 @@ rm -rf get-pip.py
 wget https://bootstrap.pypa.io/get-pip.py
 python3.5 get-pip.py
 
-cd /tmp
-git clone https://github.com/jplana/python-etcd.git
-cd python-etcd
-python3.5 setup.py install
-
+pip install https://github.com/google/brotli/archive/master.zip
+pip install https://github.com/jplana/python-etcd/archive/master.zip
 
 pip install 'cython>=0.23.4' git+git://github.com/gevent/gevent.git#egg=gevent
 
