@@ -6,6 +6,7 @@ set -x
 # groupadd -r redis && useradd -r -g redis redis
 
 # $minimal_apt_get_install build-essential
+$minimal_apt_get_install wget tar
 
 mkdir -p /opt/redis
 cd /opt/redis
