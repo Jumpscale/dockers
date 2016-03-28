@@ -5,7 +5,9 @@ set -ex
 ORG_PATH="github.com/coreos"
 REPO_PATH="${ORG_PATH}/etcd"
 
+
 $minimal_apt_get_install golang
+
 export GOPATH=/tmp/etcdgopath
 
 
