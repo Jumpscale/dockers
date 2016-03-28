@@ -9,7 +9,7 @@ set -x
 $minimal_apt_get_install wget tar
 
 mkdir -p /opt/redis
-cd /opt/redis
+cd /opt/redis/
 wget http://download.redis.io/releases/redis-3.0.6.tar.gz
 tar xzf redis-3.0.6.tar.gz
 
@@ -20,6 +20,9 @@ tar xzf redis-3.0.6.tar.gz
 
 rm -f /usr/local/bin/redis-server
 rm -f /usr/local/bin/redis-cli
+ls
+cd /opt/redis/
+ls
 cp /opt/redis/redis-3.0.6/src/redis-server /opt/jumpscale8/bin/
 cp /opt/redis/redis-3.0.6/src/redis-cli /opt/jumpscale8/bin/
 
