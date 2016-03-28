@@ -7,7 +7,7 @@ apt-get update
 
 $minimal_apt_get_install libpython3.5-dev python3.5-dev libffi-dev gcc build-essential autoconf libtool pkg-config libpq-dev
 $minimal_apt_get_install libsqlite3-dev
-#$minimal_apt_get_install net-tools sudo
+$minimal_apt_get_install net-tools sudo
 
 cd /tmp
 sudo rm -rf brotli/
