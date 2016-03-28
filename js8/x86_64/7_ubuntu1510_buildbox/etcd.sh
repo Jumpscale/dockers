@@ -17,7 +17,7 @@ fi
 
 # rm -rf /build/opt/etcd
 # mkdir -p /build/opt/etcd
-
+apt-get update
 $minimal_apt_get_install golang
 go get -d -u github.com/coreos/etcd
 
