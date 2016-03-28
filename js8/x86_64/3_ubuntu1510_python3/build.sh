@@ -12,6 +12,7 @@ $minimal_apt_get_install git
 
 cd /tmp
 sudo rm -rf brotli/
+git config http.sslVerify false
 git clone https://github.com/google/brotli.git
 cd /tmp/brotli/
 python setup.py install
