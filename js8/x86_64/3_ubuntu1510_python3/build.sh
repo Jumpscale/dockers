@@ -7,7 +7,7 @@ apt-get update
 
 $minimal_apt_get_install libpython3.5-dev python3.5-dev libffi-dev gcc build-essential autoconf libtool pkg-config libpq-dev
 $minimal_apt_get_install libsqlite3-dev
-$minimal_apt_get_install wget
+$minimal_apt_get_install wget git
 
 #DANGEROUS TO RENAME PYTHON
 #rm -f /usr/bin/python
