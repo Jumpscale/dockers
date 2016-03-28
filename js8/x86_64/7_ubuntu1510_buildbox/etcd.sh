@@ -16,7 +16,7 @@ fi
 # rm -rf /build/opt/etcd
 # mkdir -p /build/opt/etcd
 
-$minimal_apt_get_install golang-go
+$minimal_apt_get_install golang
 go get -d -u github.com/coreos/etcd
 
 cd $GOPATH/src/$REPO_PATH
