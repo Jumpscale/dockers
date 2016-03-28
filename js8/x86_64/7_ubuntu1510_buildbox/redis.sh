@@ -12,7 +12,6 @@ mkdir -p /opt/redis
 cd /opt/redis
 wget http://download.redis.io/releases/redis-3.0.6.tar.gz
 tar xzf redis-3.0.6.tar.gz
-cd redis-3.0.6
 
 # rm -rf /build/opt/redis
 # mkdir -p /build/opt/redis
