@@ -1,4 +1,4 @@
-FROM jumpscale/ubuntu1510_python3
+FROM ubuntu:15.10
 
 MAINTAINER JumpScale
 
@@ -9,5 +9,7 @@ ENV HOME /root/
 
 RUN bash /bd_build/build.sh
 
+RUN js 'j.tools.cuisine.local.builder.all()'
 
-CMD ["js 'j.tool.cuisine.local.builder.all()'"]
+
+CMD ["/sbin/my_init"]
