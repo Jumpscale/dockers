@@ -3,7 +3,7 @@ set -e
 source /bd_build/buildconfig
 set -x
 
-$minimal_apt_get_install wget
+$minimal_apt_get_install wget python3.5-dev 
 
 apt-get update
 
