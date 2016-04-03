@@ -3,6 +3,8 @@ set -e
 source /bd_build/buildconfig
 set -x
 
+$minimal_apt_get_install wget
+
 rm -rf get-pip.py
 wget https://bootstrap.pypa.io/get-pip.py
 
