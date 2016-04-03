@@ -9,8 +9,6 @@ ENV HOME /root/
 
 RUN bash /bd_build/build.sh
 
-RUN cd builder
-RUN ls
-RUN sudo make build
+RUN sudo make build --makefile builder/Makefile
 
 CMD ["/sbin/my_init"]
