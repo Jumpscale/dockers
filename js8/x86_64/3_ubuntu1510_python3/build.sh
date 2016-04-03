@@ -24,54 +24,54 @@ rm -rf get-pip.py
 wget --no-check-certificate https://bootstrap.pypa.io/get-pip.py
 python3.5 get-pip.py
 
-pip install https://github.com/google/brotli/archive/master.zip
-pip install https://github.com/jplana/python-etcd/archive/master.zip
+pip3 install https://github.com/google/brotli/archive/master.zip
+pip3 install https://github.com/jplana/python-etcd/archive/master.zip
 
-pip install 'cython>=0.23.4' git+git://github.com/gevent/gevent.git#egg=gevent
+pip3 install 'cython>=0.23.4' git+git://github.com/gevent/gevent.git#egg=gevent
 
-pip install paramiko
+pip3 install paramiko
 
-pip install msgpack-python
-pip install redis
-pip install credis
-pip install aioredis
+pip3 install msgpack-python
+pip3 install redis
+pip3 install credis
+pip3 install aioredis
 
-pip install mongoengine
+pip3 install mongoengine
 
-pip install bcrypt
-pip install blosc
-pip install certifi
-pip install docker-py
+pip3 install bcrypt
+pip3 install blosc
+pip3 install certifi
+pip3 install docker-py
 
-pip install gitlab3
-pip install gitpython
-pip install html2text
+pip3 install gitlab3
+pip3 install gitpython
+pip3 install html2text
 
 # pip install pysqlite
-pip install click
-pip install influxdb
-pip install ipdb
-pip install ipython --upgrade
-pip install jinja2
-pip install netaddr
+pip3 install click
+pip3 install influxdb
+pip3 install ipdb
+pip3 install ipython --upgrade
+pip3 install jinja2
+pip3 install netaddr
 
-pip install reparted
-pip install pytoml
-pip install pystache
-pip install pymongo
-pip install psycopg2
-pip install pathtools
-pip install psutil
+pip3 install reparted
+pip3 install pytoml
+pip3 install pystache
+pip3 install pymongo
+pip3 install psycopg2
+pip3 install pathtools
+pip3 install psutil
 
-pip install pytz
-pip install requests
-pip install sqlalchemy
-pip install urllib3
-pip install zmq
-pip install pyyaml
-pip install websocket
-pip install marisa-trie
-pip install pylzma
-pip install ujson
-pip install watchdog
-pip install colorlog
+pip3 install pytz
+pip3 install requests
+pip3 install sqlalchemy
+pip3 install urllib3
+pip3 install zmq
+pip3 install pyyaml
+pip3 install websocket
+pip3 install marisa-trie
+pip3 install pylzma
+pip3 install ujson
+pip3 install watchdog
+pip3 install colorlog
