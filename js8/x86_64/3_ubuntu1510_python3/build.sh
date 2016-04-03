@@ -74,3 +74,4 @@ pip install marisa-trie
 pip install pylzma
 pip install ujson
 pip install watchdog
+pip install colorlog
