@@ -3,11 +3,11 @@ set -e
 source /bd_build/buildconfig
 set -x
 
-$minimal_apt_get_install wget python3.5
+#$minimal_apt_get_install wget python python3.5
 
-rm -rf get-pip.py
-wget --no-check-certificate https://bootstrap.pypa.io/get-pip.py
-python3.5 get-pip.py
+#rm -rf get-pip.py
+#wget --no-check-certificate https://bootstrap.pypa.io/get-pip.py
+#python3.5 get-pip.py
 
 apt-get update
 
