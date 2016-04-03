@@ -3,7 +3,8 @@ set -e
 source /bd_build/buildconfig
 set -x
 
-#$minimal_apt_get_install wget python python3.5
+$minimal_apt_get_install wget
+
 apt-get update
 
 rm -rf get-pip.py
