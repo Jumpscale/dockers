@@ -11,6 +11,4 @@ python3.5 get-pip.py
 
 apt-get update
 
-python get-pip.py
-
 pip install https://github.com/g8os/builder/archive/master.zip
