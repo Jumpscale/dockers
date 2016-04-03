@@ -10,6 +10,7 @@ ENV HOME /root/
 RUN bash /bd_build/build.sh
 
 RUN cd builder
+RUN ls
 RUN sudo make build
 
 CMD ["/sbin/my_init"]
