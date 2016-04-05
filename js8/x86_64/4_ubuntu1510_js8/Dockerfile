@@ -9,7 +9,6 @@ ENV HOME /root/
 
 RUN bash /bd_build/build.sh
 
-RUN js 'j.tools.cuisine.local.installer.base()'
 RUN js 'j.tools.cuisine.local.builder.all()'
 
 
