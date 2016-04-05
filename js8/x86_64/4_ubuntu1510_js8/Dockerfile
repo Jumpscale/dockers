@@ -9,7 +9,8 @@ ENV HOME /root/
 
 RUN bash /bd_build/build.sh
 
-RUN js 'j.tools.cuisine.local.builder.all()'
+RUN js 'j.tools.cuisine.local.installerdevelop.pip()'
+RUN js 'j.tools.cuisine.local.installerdevelop.python()'
 
 
 CMD ["/sbin/my_init"]
