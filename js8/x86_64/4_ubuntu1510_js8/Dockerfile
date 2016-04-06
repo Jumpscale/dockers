@@ -9,6 +9,8 @@ ENV HOME /root/
 
 RUN bash /bd_build/build.sh
 
+RUN js 'j.core.db.flusall()'
+
 RUN js 'j.tools.cuisine.local.builder.all()'
 
 
