@@ -11,7 +11,19 @@ RUN bash /bd_build/build.sh
 
 RUN js 'j.core.db.flushall()'
 
-RUN js 'j.tools.cuisine.local.builder.all()'
-
+RUN js 'j.tools.cuisine.local.installerdevelop.pip()'
+RUN js 'j.tools.cuisine.local.installerdevelop.python()'
+RUN js 'j.tools.cuisine.local.portal.install(start=start)'
+RUN js 'j.tools.cuisine.local.redis.build(start=start, force=True)'
+RUN js 'j.tools.cuisine.local.core.build(start=start)'
+RUN js 'j.tools.cuisine.local.syncthing.build(start=start)'
+RUN js 'j.tools.cuisine.local.controller.build(start=start)'
+RUN js 'j.tools.cuisine.local.fs.build(start=start)'
+RUN js 'j.tools.cuisine.local.stor.build(start=start)'
+RUN js 'j.tools.cuisine.local.etcd.build(start=start)'
+RUN js 'j.tools.cuisine.local.mongodb.build(start=start)'
+RUN js 'j.tools.cuisine.local.caddy.build(start=start)'
+RUN js 'j.tools.cuisine.local.influxdb.build(start=start)'
+RUN js 'j.tools.cuisine.local.weave.build(start=start)'
 
 CMD ["/sbin/my_init"]
