@@ -75,3 +75,4 @@ pip3 install pylzma
 pip3 install ujson
 pip3 install watchdog
 pip3 install colorlog
+pip3 install colored_traceback
