@@ -7,6 +7,8 @@ ADD . /bd_build
 
 ENV HOME /root/
 
+ENV TERM="xterm-256color"
+
 RUN bash /bd_build/build.sh
 
 RUN js 'j.core.db.flushall()'
