@@ -6,5 +6,9 @@ set -x
 apt-get update
 $minimal_apt_get_install curl
 
+
+func() {docker inspect $@ | grep "IPAddress"|  cut -d '"' -f 4 }
+alias diip=func
+
 export SANDBOX=0
 cd /tmp;rm -f install.sh;curl -k https://raw.githubusercontent.com/Jumpscale/jumpscale_core8/master/install/install.sh > install.sh;bash install.sh
