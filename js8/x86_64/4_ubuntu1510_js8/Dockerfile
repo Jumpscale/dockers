@@ -7,8 +7,6 @@ ADD . /bd_build
 
 ENV HOME /root/
 
-ENV remotedockerip=`diip remote1`
-
 RUN bash /bd_build/build.sh
 
 RUN js 'j.core.db.flushall()'
