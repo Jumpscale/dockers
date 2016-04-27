@@ -1,4 +1,4 @@
-FROM ubuntu:15.10
+FROM jumpscale/ubuntu1510
 
 MAINTAINER JumpScale
 
