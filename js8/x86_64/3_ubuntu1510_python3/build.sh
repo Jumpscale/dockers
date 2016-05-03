@@ -66,7 +66,7 @@ pip3 install psutil
 pip3 install pytz
 pip3 install requests
 pip3 install sqlalchemy
-pip3 install urllib3
+pip3 install urllib3 --upgrade
 pip3 install zmq
 pip3 install pyyaml
 pip3 install websocket
