@@ -1,4 +1,4 @@
-FROM jumpscale/ubuntu1510_python3
+FROM jumpscale/ubuntu1604_python3
 
 MAINTAINER JumpScale
 

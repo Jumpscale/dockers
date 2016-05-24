@@ -64,7 +64,7 @@ pip3 install pathtools
 pip3 install psutil
 
 pip3 install pytz
-pip3 install ply 
+pip3 install ply
 pip3 install requests
 pip3 install sqlalchemy
 pip3 install urllib3 --upgrade
