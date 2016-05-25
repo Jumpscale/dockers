@@ -1,0 +1,16 @@
+FROM alpine:3.1
+
+MAINTAINER JumpScale
+
+ADD . /bd_build
+#ADD build /build
+
+ENV HOME /root/
+
+COPY build/opt /opt
+
+#RUN /bd_build/do.sh && \
+#	/bd_build/cleanup.sh
+
+
+CMD ["/bin/bash"]
