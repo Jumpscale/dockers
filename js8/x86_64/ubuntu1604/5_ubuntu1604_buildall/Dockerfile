@@ -1,4 +1,4 @@
-FROM jumpscale/ubuntu1510_js8
+FROM jumpscale/ubuntu1604_js8
 
 MAINTAINER JumpScale
 
