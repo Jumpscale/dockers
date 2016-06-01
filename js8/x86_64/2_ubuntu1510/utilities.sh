@@ -8,7 +8,7 @@ $minimal_apt_get_install curl less mc python3.5 iproute2 iputils-arping inetutil
 
 $minimal_apt_get_install net-tools sudo
 
-$minimal_apt_get_install mc git wget tmux lsb-release
+$minimal_apt_get_install mc git wget tmux lsb-release vim
 
 #rm -rf /usr/bin/python
 #ln /usr/bin/python3.5 /usr/bin/python
