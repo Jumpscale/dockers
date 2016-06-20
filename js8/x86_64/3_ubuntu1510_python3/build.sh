@@ -77,3 +77,12 @@ pip3 install ujson
 pip3 install watchdog
 pip3 install colorlog
 pip3 install colored_traceback
+
+cd /tmp
+sudo rm -rf brotli/
+git clone https://github.com/google/brotli.git
+cd /tmp/brotli/
+./configure
+make
+cp /tmp/brotli/bin/bro /usr/local/bin/
+rm -rf /tmp/brotli

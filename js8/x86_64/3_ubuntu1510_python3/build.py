@@ -25,11 +25,9 @@ cd /tmp
 sudo rm -rf brotli/
 git clone https://github.com/google/brotli.git
 cd /tmp/brotli/
-python setup.py install
-cd tests
+./configure
 make
-cd ..
-cp /tmp/brotli/tools/bro /usr/local/bin/
+cp /tmp/brotli/bin/bro /usr/local/bin/
 rm -rf /tmp/brotli
 
 #DANGEROUS TO RENAME PYTHON
