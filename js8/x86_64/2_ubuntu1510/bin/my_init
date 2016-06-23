@@ -71,7 +71,9 @@ def import_envvars(clear_existing_environment = True, override_existing_environm
 			value = re.sub('\n\Z', '', f.read())
 		new_env[name] = value
 	if clear_existing_environment:
-		os.environ.clear()
+		for i in list(os.environ.keys()):
+			if i not in ['HOME', 'USER', 'GROUP', 'UID', 'GID', 'SHELL']:
+				del os.environ[i]
 	for name, value in new_env.items():
 		if override_existing_environment or not name in os.environ:
 			os.environ[name] = value
