@@ -1,3 +1,0 @@
-/bin/bash: /opt/jumpscale8/bin/redis --unixsocket /tmp/redis.sock --port 0 --maxmemory 100000000 --daemonize yes: No such file or directory
-/bin/bash: /opt/jumpscale8/bin/redis --unixsocket /tmp/redis.sock --port 0 --maxmemory 100000000 --daemonize yes: No such file or directory
-/bin/bash: /opt/jumpscale8/bin/redis --unixsocket /tmp/redis.sock --port 0 --maxmemory 100000000 --daemonize yes: No such file or directory
