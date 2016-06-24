@@ -29,13 +29,12 @@ class DockerBuilder():
                 path = j.sal.fs.joinPaths(self.homepath, item)
                 self.todo.append(DockerBuild(self, name, path))
 
-    def setDockerHost(self, host):
-        host, port = host.split(':')
-        j.sal.docker.connectRemoteTCP(host, port)
+    # def setDockerHost(self, host):
+    #     host, port = host.split(':')
+    #     j.sal.docker.connectRemoteTCP(host, port)
 
     def ask(self):
         self.todo = j.tools.console.askChoiceMultiple(self.todo, descr="Please select dockers you want to build & push.", sort=False)  # do not sort
-        self.build()
 
     def build(self):
         for docker in self.todo:
@@ -61,38 +60,28 @@ class DockerBuild():
         rc = 0
         if j.sal.fs.exists(path=self._pathPythonBuild):
             pythonbuild = True
-            self.log("Python Build")
-            C = j.sal.fs.fileGetContents(self._pathPythonBuild)
-            curdir = self.path
-            out = ""
-            locals_ = {"curdir": curdir}
-            try:
-                res = exec(C, globals(), locals_)
-            except Exception as e:
-                print(e.with_traceback(e.__traceback__))
-                rc = 1
+            self.log("Python Build:%s"%self._pathPythonBuild)
+            # C = j.sal.fs.fileGetContents(self._pathPythonBuild)
+            command="cd %s;python3 build.py"%self.path
+            j.sal.process.executeWithoutPipe(command, die=True, printCommandToStdout=True)
+
 
         else:
-            self.log("std docker build")
+            self.log("std docker build:%s"%self.path)
             imageName = 'jumpscale/%s' % self.name
-            try:
-                output = j.sal.docker.build(self.path, imageName, output=True)
-                self.log("build ok")
-            except:
-                j.sal.fs.writeFile(filename=self.builder.errpath, contents=output)
-                self.log("BUILD IN ERROR")
-                rc = 1
-                raise j.exceptions.RuntimeError("could not build")
+            output = j.sal.docker.build(self.path, imageName, output=True,force=True)
+            # try:
+                
+            #     self.log("build ok")
+            # except:
+            #     j.sal.fs.writeFile(filename=self.builder.errpath, contents=output)
+            #     self.log("BUILD IN ERROR")
+            #     rc = 1
+            #     raise j.exceptions.RuntimeError("could not build")
 
-        if pythonbuild and rc == 0:
-            d = locals_["d"]
-            # d=docker object done in build.py script
-            # commit now
-            name = "jumpscale/%s" % self.name
-            self.log("COMMIT:%s" % name)
-            d.commit(name, delete=True, force=True)
+            self.log("build ok")
 
-        if self.builder.push and rc == 0:
+        if self.builder.push:
             self.push()
 
     def push(self):
@@ -113,16 +102,53 @@ class DockerBuild():
 
 
 @click.command()
-@click.option('--host', default=None, help='address:port of the docker host to use')
+@click.option('--host','-h', default=None, help='address:port of the docker host to use')
 @click.option('--debug/--nodebug', default=True, help='enable or disable debug (default: True)')
 @click.option('--push/--nopush', default=False, help='push images to docker hub afrer building (default:False)')
-def build(host, debug, push):
+@click.option('--image','-i', default="", help='specify which image to build e.g. 2_ubuntu1604, if not specified then will ask, if * then all.')
+def build(host, debug, push,image=""):
+    """
+    builds dockers with jumpscale components
+    if not options given will ask interactively
+
+    to use it remotely, docker & jumpscale needs to be pre-installed
+
+    """
     builder = DockerBuilder()
     builder.push = push
     builder.debug = debug
     if host:
-        builder.setDockerHost(host)
-    builder.ask()
+        # builder.setDockerHost(host)
+        c=j.tools.cuisine.get(host)
+        c.executor.sshclient.rsync_up(j.sal.fs.getcwd(),"/tmp/dockerbuild/")
+        cmd="cd /tmp/dockerbuild/;python3 buildall.py"
+        if push:
+            cmd+=" --push"
+        if image=="":
+            builder.ask()
+            image=builder.todo[0].name
+
+        cmd+=" -i %s"%image
+            
+        c.core.run(cmd)
+        return
+
+    if image=="":
+        builder.ask()
+    elif image=="*":
+        pass
+    else:
+        builder.todo=[item for item in builder.todo if item.name==image]
+        # builder.todo=[]
+        # for item in j.sal.fs.listDirsInDir(j.sal.fs.getcwd(),False,True):
+        #     if item==image:
+        #         item=DockerBuild(builder, item, item)
+        #         builder.todo.append(item)
+        if builder.todo==[]:
+            raise j.exceptions.Input("cannot find specified image:%s"%image)
+
+    builder.build()
+        
 
 if __name__ == '__main__':
     build()
