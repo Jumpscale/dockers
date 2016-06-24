@@ -63,9 +63,9 @@ class DockerBuild():
             self.log("Python Build:%s"%self._pathPythonBuild)
             # C = j.sal.fs.fileGetContents(self._pathPythonBuild)
             command="cd %s;python3 build.py"%self.path
-            j.sal.process.executeWithoutPipe(command, die=True, printCommandToStdout=True)
-
-
+            # j.sal.process.executeWithoutPipe(command, die=True, printCommandToStdout=True)
+            j.do.executeInteractive(command)
+            
         else:
             self.log("std docker build:%s"%self.path)
             imageName = 'jumpscale/%s' % self.name
