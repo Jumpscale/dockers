@@ -88,7 +88,6 @@ class DockerBuild():
         try:
             image = 'jumpscale/%s' % self.name
             output = j.sal.docker.push(image, output=True)
-
             self.log("push ok")
         except:
             j.sal.fs.writeFile(filename=self.builder.errpath, contents=output)
