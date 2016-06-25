@@ -89,10 +89,10 @@ class DockerBuild():
             image = 'jumpscale/%s' % self.name
             output = j.sal.docker.push(image, output=True)
             self.log("push ok")
-        except:
-            j.sal.fs.writeFile(filename=self.builder.errpath, contents=output)
+        except Exception as e:
+            j.sal.fs.writeFile(filename=self.builder.errpath, contents=str(e))
             self.log("coud not push (ERROR)")
-            raise j.exceptions.RuntimeError("could not push")
+            raise j.exceptions.RuntimeError("could not push.\n%s"%e)
 
     def __str__(self):
         return self.name
