@@ -69,7 +69,7 @@ class DockerBuild():
         else:
             self.log("std docker build:%s"%self.path)
             imageName = 'jumpscale/%s' % self.name
-            output = j.sal.docker.build(self.path, imageName, output=True,force=True)
+            output = j.sal.docker.build(self.path, imageName, output=True)
             # try:
                 
             #     self.log("build ok")
