@@ -9,4 +9,4 @@ dest = j.do.pullGitRepo(url='https://github.com/JumpScale/jscockpit.git', ssh=Fa
 
 printInfo("Build docker image")
 
-j.tools.cuisine.local.core.run("""cd %s;python scripts/building.py --nopush"""%dest)
+j.tools.cuisine.local.core.run("""cd %s;python scripts/building.py build --nopush"""%dest)
