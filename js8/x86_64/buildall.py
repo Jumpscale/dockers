@@ -81,6 +81,9 @@ class DockerBuild():
 
             self.log("build ok")
 
+            if not "Successfully built" in output:
+                raise j.exceptions.RuntimeError("Cannot build %s"%self.name)
+
         if self.builder.push:
             self.push()
 
@@ -93,6 +96,7 @@ class DockerBuild():
             j.sal.fs.writeFile(filename=self.builder.errpath, contents=str(e))
             self.log("coud not push (ERROR)")
             raise j.exceptions.RuntimeError("could not push.\n%s"%e)
+
 
     def __str__(self):
         return self.name
