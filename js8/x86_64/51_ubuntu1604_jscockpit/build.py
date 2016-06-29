@@ -5,7 +5,7 @@ vols='/bd_build:%s#/build:/tmp/build'%j.sal.fs.getcwd()
 print (vols)
 
 d=j.sal.docker.create(name='build', ports='', vols=vols, volsro='', stdout=True, base='jumpscale/ubuntu1604_golang', \
-    nameserver=['8.8.8.8'],replace=True, cpu=None, mem=0, ssh=True, harecode=False)
+    nameserver=['8.8.8.8'],replace=True, cpu=None, mem=0, ssh=True, sharecode=False)
 
 
 name="g8cockpit"
