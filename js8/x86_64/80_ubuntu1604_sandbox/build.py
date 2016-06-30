@@ -1,6 +1,6 @@
 from JumpScale import j
 
-name = 'ubuntu1604_sanbox'
+name = 'ubuntu1604_sandbox'
 logger = j.logger.get('j.docker.sandboxer')
 
 d1 = j.sal.docker.create(name='build_sandbox',
