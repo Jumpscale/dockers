@@ -2,7 +2,7 @@ from JumpScale import j
 
 name = "ubuntu1604_volumedriver"
 
-docker = j.sal.docker.create(name='build_' + name,
+d = j.sal.docker.create(name='build_' + name,
                              stdout=True,
                              base='jumpscale/ubuntu1604_arakoon',
                              nameserver=['8.8.8.8'],
@@ -12,7 +12,7 @@ docker = j.sal.docker.create(name='build_' + name,
                              detach=True,
                              privileged=True)
 
-docker.cuisine.apps.volumedriver.build(start=False)
+d.cuisine.apps.volumedriver.build(start=False)
 # clean source file
 d.cuisine.core.dir_remove('$tmpDir')
 d.cuisine.core.dir_ensure('$tmpDir')
