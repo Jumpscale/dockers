@@ -76,7 +76,7 @@ def import_envvars(clear_existing_environment = True, override_existing_environm
 				del os.environ[name]
 	for name, value in new_env.items():
 		if override_existing_environment or not name in os.environ:
-			os.environ[name] = value
+            os.environ[name] = value
 
 def export_envvars(to_dir = True):
 	if not os.path.exists("/etc/container_environment"):
@@ -271,7 +271,7 @@ def main(args):
 
 	if not args.skip_startup_files:
 		run_startup_files()
-	
+
 	runit_exited = False
 	exit_code = None
 

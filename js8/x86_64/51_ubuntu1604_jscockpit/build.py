@@ -1,12 +1,39 @@
 from JumpScale import j
 
-def printInfo(msg):
-    print (msg)
+name = "g8cockpit"
 
-printInfo("Update required git repository to last version")
+d = j.sal.docker.create(name='build_' + name,
+                        stdout=True,
+                        base='jumpscale/ubuntu1604_golang',
+                        nameserver=['8.8.8.8'],
+                        replace=False,
+                        ssh=True,
+                        sharecode=False)
 
-dest = j.do.pullGitRepo(url='https://github.com/JumpScale/jscockpit.git', ssh=False)
 
-printInfo("Build docker image")
+repos = [
+    'https://github.com/Jumpscale/ays_jumpscale8.git',
+    'https://github.com/Jumpscale/jumpscale_core8.git',
+    'https://github.com/JumpScale/jscockpit.git'
+]
+for url in repos:
+    d.cuisine.git.pullRepo(url, ssh=False)
 
-j.tools.cuisine.local.core.run("""cd %s;python scripts/building.py build --nopush"""%dest)
+d.cuisine.package.mdupdate()
+
+d.cuisine.apps.portal.install(start=False)
+d.cuisine.apps.mongodb.build(start=False)
+d.cuisine.apps.influxdb.build(start=False)
+d.cuisine.apps.grafana.build(start=False)
+d.cuisine.apps.controller.build(start=False)
+d.cuisine.apps.caddy.build(start=False)
+d.cuisine.apps.cockpit.build(start=False)
+d.cuisine.package.install('shellinabox')
+bin_path = d.cuisine.bash.cmdGetPath('shellinaboxd')
+d.cuisine.core.file_copy(bin_path, "$binDir")
+
+d.cuisine.core.dir_remove("$goDir/src/*")
+d.cuisine.core.dir_remove("$tmpDir/*")
+d.cuisine.core.dir_remove("$varDir/data/*")
+
+d.commit("jumpscale/%s" % name, delete=True, force=True)
