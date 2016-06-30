@@ -1,8 +1,8 @@
 
-# docker image with jumpscale installed
+# docker image with Ubuntu 16.04 installed
 
 see docker location on docker hub
-- https://hub.docker.com/r/jumpscale/ubuntu1510b/
+- https://hub.docker.com/r/jumpscale/ubuntu1604/
 
 std passwd
 - root/gig1234
@@ -13,7 +13,7 @@ easiest way to use (windows & max)
 - install https://www.docker.com/toolbox
 - login using your docker account (create one if you don't have yet)
 - click create
-- look for jumpscale/ubuntu1510b
+- look for jumpscale/ubuntu1604
 
 careful the std passwd is now used, use jsdocker for more security (see below)
 
@@ -21,7 +21,7 @@ careful the std passwd is now used, use jsdocker for more security (see below)
 
 ```
 docker pull jumpscale/ubuntu1510b
-jsdocker new -n ubuntu1510b -b jumpscale/ubuntu1510b --start
+jsdocker new -n ubuntu1604 -b jumpscale/ubuntu1604 --start
 ```
 
 you can now login with
@@ -35,18 +35,10 @@ port will change depending nr of dockers on your machine
 ```
 mkdir -p /opt/code/github/jumpscale
 cd /opt/code/github/jumpscale
-git clone https://github.com/Jumpscale/docker_ubuntu1510b.git
+git clone https://github.com/Jumpscale/dockers.git
 #or
-#git clone git@github.com:Jumpscale/docker_ubuntu1510b.git
+#git clone git@github.com:Jumpscale/dockers.git
 sh build_docker.sh
-```
-
-# to push back to the docker hub
-
-we do an autobuild in jumpscale/ubuntu1510b so no real need to do this manually
-```
-docker login
-docker push jumpscale/ubuntu1510b
 ```
 
 # remarks
