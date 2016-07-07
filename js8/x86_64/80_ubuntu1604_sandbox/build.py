@@ -5,7 +5,7 @@ logger = j.logger.get('j.docker.sandboxer')
 
 d1 = j.sal.docker.create(name='build_sandbox',
                          stdout=True,
-                         base='jumpscale/g8cockpit',
+                         base='jumpscale/ubuntu1604_volumedriver',
                          nameserver=['8.8.8.8'],
                          replace=True,
                          myinit=True,
