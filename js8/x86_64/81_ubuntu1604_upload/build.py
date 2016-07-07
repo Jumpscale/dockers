@@ -33,9 +33,9 @@ if len(error_files) == 0:
 else:
     raise RuntimeError('some files didnt upload properly. %s' % ("\\n".join(error_files)))
 
-metadataPath = j.sal.fs.joinPaths(output_dir, "md", "%s.flist" % namespace)
+metadataPath = j.sal.fs.joinPaths('{sandbox_dir}', "md", "{namespace}.flist")
 print('uploading %s' % metadataPath)
-store_client.putStaticFile(namespace+".flist", metadataPath)
+store_client.putStaticFile("{namespace}.flist", metadataPath)
 """.format(store_addr=store_addr, sandbox_dir=sandbox_dir, namespace=namespace)
 
 logger.debug(upload_script)
