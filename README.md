@@ -1,4 +1,4 @@
-Full documentation [here](http://gig.gitbooks.io/jumpscale8/content/Howto/How%20To%20Use%20Docker.html)
+Full documentation [here](https://gig.gitbooks.io/jumpscale-core8/content/GettingStarted/JSDockers.html)
 
 
 # How To Use
