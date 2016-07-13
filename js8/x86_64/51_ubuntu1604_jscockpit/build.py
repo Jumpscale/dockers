@@ -8,7 +8,8 @@ d = j.sal.docker.create(name='build_' + name,
                         nameserver=['8.8.8.8'],
                         replace=False,
                         ssh=True,
-                        sharecode=False)
+                        sharecode=False,
+                        setrootrndpasswd=False)
 
 
 repos = [

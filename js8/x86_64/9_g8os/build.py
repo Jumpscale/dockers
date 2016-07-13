@@ -13,7 +13,7 @@ d = j.sal.docker.create(
     cpu=None,
     mem=0,
     ssh=True,
-    sharecode=False)
+    sharecode=False,setrootrndpasswd=False)
 
 cuisine = d.cuisine
 

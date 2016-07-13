@@ -8,7 +8,7 @@ d = j.sal.docker.create(name='sandbox_upload',
                         replace=True,
                         myinit=True,
                         ssh=True,
-                        sharecode=False)
+                        sharecode=False,setrootrndpasswd=False)
 
 
 sandbox_dir = '/optvar/tmp/sandboxing'  # has to be the same as the one define in 80_sandbox docker

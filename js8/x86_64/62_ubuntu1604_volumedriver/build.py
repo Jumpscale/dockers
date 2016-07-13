@@ -10,7 +10,7 @@ d = j.sal.docker.create(name='build_' + name,
                              ssh=True,
                              myinit=True,
                              detach=True,
-                             privileged=True)
+                             privileged=True,setrootrndpasswd=False)
 
 d.cuisine.apps.volumedriver.build(start=False)
 

@@ -15,7 +15,8 @@ d = j.sal.docker.create(name='build',
                         cpu=None,
                         mem=0,
                         ssh=True,
-                        sharecode=False)
+                        sharecode=False,
+                        setrootrndpasswd=False)
 
 name = "ubuntu1604_golang"
 

@@ -10,7 +10,7 @@ d1 = j.sal.docker.create(name='build_sandbox',
                          replace=True,
                          myinit=True,
                          ssh=True,
-                         sharecode=False)
+                         sharecode=False,setrootrndpasswd=False)
 
 
 d2 = j.sal.docker.create(name='build_alpine',
@@ -20,7 +20,7 @@ d2 = j.sal.docker.create(name='build_alpine',
                          replace=True,
                          myinit=False,
                          ssh=True,
-                         sharecode=False)
+                         sharecode=False,setrootrndpasswd=False)
 
 
 # Sandbox need to happens in two step
