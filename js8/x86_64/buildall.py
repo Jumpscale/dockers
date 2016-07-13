@@ -62,9 +62,11 @@ class DockerBuild():
             pythonbuild = True
             self.log("Python Build:%s"%self._pathPythonBuild)
             # C = j.sal.fs.fileGetContents(self._pathPythonBuild)
-            command="cd %s;python3 build.py"%self.path
-            # j.sal.process.executeWithoutPipe(command, die=True, printCommandToStdout=True)
-            j.do.executeInteractive(command)
+
+            command="cd %s;python3 build.py"%(self.path)
+            rc=j.do.executeInteractive(command)
+            if rc>0:                
+                raise j.exceptions.RuntimeError("could not build %s"%self.name)
             
         else:
             self.log("std docker build:%s"%self.path)
