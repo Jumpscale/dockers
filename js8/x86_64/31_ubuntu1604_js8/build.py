@@ -17,6 +17,7 @@ d = j.sal.docker.create(name='build',
                         cpu=None,
                         mem=0,
                         ssh=True,
+                        sshkeyname="docker_default"
                         sharecode=False)
 
 d.cuisine.installerdevelop.jumpscale8()

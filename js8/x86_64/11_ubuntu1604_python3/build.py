@@ -17,6 +17,7 @@ d = j.sal.docker.create(name='build',
                         cpu=None,
                         mem=0,
                         ssh=True,
+                        rootpasswd="gig1234"
                         sharecode=False)
 
 j.actions.resetAll()
