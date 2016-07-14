@@ -1,12 +1,12 @@
 from JumpScale import j
 
-name = "g8cockpit"
+name = "ubuntu1604_jscockpit"
 
-d = j.sal.docker.create(name='build_' + name,
+d = j.sal.docker.create(name='build',
                         stdout=True,
                         base='jumpscale/ubuntu1604_golang',
                         nameserver=['8.8.8.8'],
-                        replace=False,
+                        replace=True,
                         ssh=True,
                         sharecode=False,
                         setrootrndpasswd=False)

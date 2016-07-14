@@ -3,9 +3,12 @@ from JumpScale import j
 name = 'ubuntu1604_sandbox'
 logger = j.logger.get('j.docker.sandboxer')
 
+# base='jumpscale/ubuntu1604_volumedriver'
+base='jumpscale/ubuntu1604_jscockpit'
+
 d1 = j.sal.docker.create(name='build_sandbox',
                          stdout=True,
-                         base='jumpscale/ubuntu1604_volumedriver',
+                         base=base,
                          nameserver=['8.8.8.8'],
                          replace=True,
                          myinit=True,
@@ -27,6 +30,12 @@ d2 = j.sal.docker.create(name='build_alpine',
 # first we copy all required libs and binaries under /opt/jumpscale8
 # second we dedupe all the files and generated the flist.
 # These two steps needs to happens in two script, doing it all in one script segfault.
+
+from IPython import embed
+print ("DEBUG NOW ssd")
+embed()
+p
+
 
 # make sure brotli is installed
 if not d1.cuisine.core.command_check('bro'):

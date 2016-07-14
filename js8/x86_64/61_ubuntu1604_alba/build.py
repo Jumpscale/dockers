@@ -2,7 +2,7 @@ from JumpScale import j
 
 name = "ubuntu1604_alba"
 
-d = j.sal.docker.create(name='build-' + name,
+d = j.sal.docker.create(name='build',
                              stdout=True,
                              base='jumpscale/ubuntu1604_g8cockpit',
                              nameserver=['8.8.8.8'],
