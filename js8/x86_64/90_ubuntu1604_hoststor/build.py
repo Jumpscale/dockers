@@ -50,44 +50,13 @@ if not j.sal.nettools.tcpPortConnectionTest("localhost",8090):
 
 store_client = j.clients.storx.get('http://localhost:8090')
 
+#@todo PLEASE COMPLETE
 
 from IPython import embed
 print ("DEBUG NOW sdsd")
 embed()
 p
 
-
+#do a test
 store_client.putFile("test","/storage/builder/sandbox_ub1604/js8/files/a/a/aa6a634cf373728e934b3d6da15759bd.bro")
 
-
-
-sandbox_dir = '/optvar/tmp/sandboxing'  # has to be the same as the one define in 80_sandbox docker
-store_addr = 'https://stor.jumpscale.org/storx'
-namespace = 'js8_opt'
-
-upload_script = """
-store_client = j.clients.storx.get('{store_addr}')
-files_path = j.sal.fs.joinPaths('{sandbox_dir}', 'files')
-files = j.sal.fs.listFilesInDir(files_path, recursive=True)
-error_files = []
-for f in files:
-    src_hash = j.data.hash.md5(f)
-    print('uploading %s' % f)
-    uploaded_hash = store_client.putFile('{namespace}', f)
-    if src_hash != uploaded_hash:
-        error_files.append(f)
-        print("%s hash doesn't match\\nsrc     :%32s\\nuploaded:%32s" % (f, src_hash, uploaded_hash))
-
-if len(error_files) == 0:
-    print("all uploaded ok")
-else:
-    raise RuntimeError('some files didnt upload properly. %s' % ("\\n".join(error_files)))
-
-metadataPath = j.sal.fs.joinPaths('{sandbox_dir}', "md", "{namespace}.flist")
-print('uploading %s' % metadataPath)
-store_client.putStaticFile("{namespace}.flist", metadataPath)
-""".format(store_addr=store_addr, sandbox_dir=sandbox_dir, namespace=namespace)
-
-logger.debug(upload_script)
-logger.debug('Start upload to store %s' % store_addr)
-d.cuisine.core.execute_jumpscript(upload_script)
