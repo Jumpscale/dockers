@@ -2,6 +2,8 @@ from JumpScale import j
 
 name = "ubuntu1604_volumedriver"
 
+j.actions.resetAll()
+
 d = j.sal.docker.create(name='build',
                              stdout=True,
                              base='jumpscale/ubuntu1604_alba',

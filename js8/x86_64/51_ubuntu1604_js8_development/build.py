@@ -1,3 +1,4 @@
+
 from JumpScale import j
 
 name = "ubuntu1604_jscockpit"
@@ -12,11 +13,15 @@ d = j.sal.docker.create(name='build',
                         setrootrndpasswd=False)
 
 
+j.actions.resetAll()
+
+
 repos = [
     'https://github.com/Jumpscale/ays_jumpscale8.git',
     'https://github.com/Jumpscale/jumpscale_core8.git',
     'https://github.com/JumpScale/jscockpit.git'
 ]
+
 for url in repos:
     d.cuisine.git.pullRepo(url, ssh=False)
 
@@ -28,7 +33,9 @@ d.cuisine.apps.influxdb.build(start=False)
 d.cuisine.apps.grafana.build(start=False)
 d.cuisine.apps.controller.build(start=False)
 d.cuisine.apps.caddy.build(start=False)
+d.cuisine.apps.stor.build(start=False)
 d.cuisine.apps.cockpit.build(start=False)
+d.cuisine.geodns.install()
 d.cuisine.package.install('shellinabox')
 bin_path = d.cuisine.bash.cmdGetPath('shellinaboxd')
 d.cuisine.core.file_copy(bin_path, "$binDir")

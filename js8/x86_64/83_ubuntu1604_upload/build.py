@@ -1,5 +1,7 @@
 from JumpScale import j
 
+j.actions.resetAll()
+
 logger = j.logger.get('j.docker.sandbox_upload')
 d = j.sal.docker.create(name='sandbox_upload',
                         stdout=True,
@@ -8,7 +10,9 @@ d = j.sal.docker.create(name='sandbox_upload',
                         replace=True,
                         myinit=True,
                         ssh=True,
-                        sharecode=False,setrootrndpasswd=False)
+                        sharecode=False,setrootrndpasswd=False,
+                        vols="/out:/storage/builder/sandbox_ub1604"
+                        )
 
 
 sandbox_dir = '/optvar/tmp/sandboxing'  # has to be the same as the one define in 80_sandbox docker

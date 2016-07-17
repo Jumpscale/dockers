@@ -20,6 +20,9 @@ d = j.sal.docker.create(name='build',
                         sharecode=False,
                         setrootrndpasswd=False)
 
+#should not be needed but does not work for now
+j.actions.resetAll()
+
 d.cuisine.installerdevelop.jumpscale8()
 
 d.commit("jumpscale/%s" % name, delete=True, force=True)

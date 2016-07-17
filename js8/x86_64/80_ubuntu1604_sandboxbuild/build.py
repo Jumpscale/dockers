@@ -6,24 +6,32 @@ logger = j.logger.get('j.docker.sandboxer')
 # base='jumpscale/ubuntu1604_volumedriver'
 base='jumpscale/ubuntu1604_jscockpit'
 
-d1 = j.sal.docker.create(name='build_sandbox',
+j.actions.resetAll()
+
+j.sal.btrfs.subvolumeCreate("/storage/builder")
+j.sal.btrfs.subvolumeCreate("/storage/builder/sandbox_ub1604")
+
+d1 = j.sal.docker.create(name='build',
                          stdout=True,
                          base=base,
                          nameserver=['8.8.8.8'],
                          replace=True,
                          myinit=True,
                          ssh=True,
-                         sharecode=False,setrootrndpasswd=False)
+                         sharecode=False,
+                         setrootrndpasswd=False,
+                         vols="/out:/storage/builder/sandbox_ub1604")
 
 
-d2 = j.sal.docker.create(name='build_alpine',
-                         stdout=True,
-                         base='jumpscale/alpine',
-                         nameserver=['8.8.8.8'],
-                         replace=True,
-                         myinit=False,
-                         ssh=True,
-                         sharecode=False,setrootrndpasswd=False)
+# d2 = j.sal.docker.create(name='build_alpine',
+#                          stdout=True,
+#                          base='jumpscale/alpine',
+#                          nameserver=['8.8.8.8'],
+#                          replace=True,
+#                          myinit=False,
+#                          ssh=True,
+#                          sharecode=False,
+#                          setrootrndpasswd=False)
 
 
 # Sandbox need to happens in two step
@@ -31,11 +39,16 @@ d2 = j.sal.docker.create(name='build_alpine',
 # second we dedupe all the files and generated the flist.
 # These two steps needs to happens in two script, doing it all in one script segfault.
 
-from IPython import embed
-print ("DEBUG NOW ssd")
-embed()
-p
+repos = [
+    'https://github.com/Jumpscale/ays_jumpscale8.git',
+    'https://github.com/Jumpscale/jumpscale_core8.git',
+    'https://github.com/JumpScale/jscockpit.git'
+]
 
+for url in repos:
+    d1.cuisine.git.pullRepo(url, ssh=False)
+
+d1.cuisine.package.mdupdate()
 
 # make sure brotli is installed
 if not d1.cuisine.core.command_check('bro'):
@@ -74,15 +87,25 @@ j.tools.sandboxer.sandboxLibs("%s/bin" % cuisine.core.dir_paths['base'], recursi
 logger.info("start sandboxing")
 d1.cuisine.core.execute_jumpscript(sandbox_script)
 
+name="js8"
 
 dedupe_script = """
-j.tools.sandboxer.dedupe('/opt', storpath='/optvar/tmp/sandboxing', name='js8_opt', reset=True, append=True, excludeDirs=['/opt/code'])
+j.sal.fs.removeDirTree("/out/$name")
+j.tools.sandboxer.dedupe('/opt', storpath='/out/$name', name='js8_opt', reset=False, append=True, excludeDirs=['/opt/code'])
 """
+dedupe_script=dedupe_script.replace("$name",name)
 logger.info("start dedupe")
 d1.cuisine.core.execute_jumpscript(dedupe_script)
 
 
-# TODO: send sandbox on alpine and try to start jumpscale. Currently aline can't load the librairies from ubuntu1604
+copy_script="""
+j.sal.fs.removeDirTree("/out/$name/jumpscale8/")
+j.sal.fs.copyDirTree("/opt/jumpscale8/","/out/$name/jumpscale8",deletefirst=True,ignoredir=['.egg-info', '.dist-info','__pycache__'],ignorefiles=['.egg-info',"*.pyc"])
+j.sal.fs.removeIrrelevantFiles("/out")
+"""
+copy_script=copy_script.replace("$name",name)
+logger.info("start copy sandbox")
+d1.cuisine.core.execute_jumpscript(copy_script)
 
-logger.info("commit image jumpscale/%s" % name)
-d1.commit("jumpscale/%s" % name, delete=True, force=True)
+# logger.info("commit image jumpscale/%s" % name)
+# d1.commit("jumpscale/%s" % name, delete=True, force=True)

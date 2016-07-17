@@ -72,9 +72,17 @@ class DockerBuild():
             self.log("build ok")
 
             if not "Successfully built" in output:
-                raise j.exceptions.RuntimeError("Cannot build %s"%self.name)
+                from IPython import embed
+                print ("DEBUG NOW sdsd")
+                embed()
+                p
+                
+                raise j.exceptions.RuntimeError("Cannot build %s from dockerfile"%self.name)
 
         if self.builder.push:
+            nopushfile=j.sal.fs.joinPaths(self.path,".nopush")
+            if j.sal.fs.exists(nopushfile):
+                return
             self.push()
 
     def push(self):

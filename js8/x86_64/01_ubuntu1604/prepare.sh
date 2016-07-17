@@ -38,6 +38,12 @@ $minimal_apt_get_install apt-transport-https ca-certificates
 ## Install add-apt-repository
 $minimal_apt_get_install software-properties-common
 
+# $minimal_apt_get_install iso-codes libapt-inst2.0 libcap-ng0 libdbus-1-3 libdbus-glib-1-2 libexpat1 libgirepository-1.0-1 libglib2.0-0 libglib2.0-data libicu55 libmagic1
+# # $minimal_apt_get_install libpython3-stdlib libpython3.5-minimal libpython3.5-stdlib 
+# $minimal_apt_get_install lsb-release mime-support libxml2 libmpdec2
+# # $minimal_apt_get_install sgml-base 
+# $minimal_apt_get_install shared-mime-info ucf
+
 ## Upgrade all packages.
 apt-get dist-upgrade -y --no-install-recommends
 

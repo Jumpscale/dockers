@@ -4,14 +4,15 @@ source /bd_build/buildconfig
 set -x
 
 
-$minimal_apt_get_install curl less mc python3.5 iproute2 iputils-arping inetutils-telnet inetutils-ftp rsync inetutils-traceroute iputils-ping iputils-tracepath iputils-clockdiff
+$minimal_apt_get_install curl less mc rsync sudo tmux lsb-release
+$minimal_apt_get_install iproute2 iputils-arping inetutils-telnet inetutils-ftp  inetutils-traceroute 
+$minimal_apt_get_install iputils-ping iputils-tracepath iputils-clockdiff
 
-$minimal_apt_get_install net-tools sudo
+$minimal_apt_get_install python3.5 
 
-$minimal_apt_get_install mc git wget tmux lsb-release
+$minimal_apt_get_install net-tools
 
-#rm -rf /usr/bin/python
-#ln /usr/bin/python3.5 /usr/bin/python
+$minimal_apt_get_install git wget 
 
 ## This tool runs a command as another user and sets $HOME.
 cp /bd_build/bin/setuser /sbin/setuser
