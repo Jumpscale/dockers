@@ -24,7 +24,8 @@ j.actions.resetAll()
 
 repos = {
     'Automation Framework = Jumpscale': 'https://github.com/Jumpscale/jumpscale_core8.git',
-    'Overlay Mgmt Platform = Cockpit': 'https://github.com/JumpScale/jscockpit.git'
+    'Overlay Mgmt Platform = Cockpit': 'https://github.com/JumpScale/jscockpit.git',
+    'Identity Management = ItsYouOnline': 'https://github.com/0-complexity/itsyouonline-reference-implementation.git',
 }
 #prob need more repo's
 
