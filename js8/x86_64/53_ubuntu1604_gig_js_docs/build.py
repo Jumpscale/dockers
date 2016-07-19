@@ -20,19 +20,17 @@ d = j.sal.docker.create(name='build',
                          sharecode=False,
                          setrootrndpasswd=False)
 
-repos = [
-    'https://github.com/Jumpscale/ays_jumpscale8.git',
-    'https://github.com/Jumpscale/jumpscale_core8.git',
-    'https://github.com/JumpScale/jscockpit.git'
-]
+repos = {
+    'Automation Framework = Jumpscale': 'https://github.com/Jumpscale/jumpscale_core8.git',
+    'Overlay Mgmt Platform = Cockpit': 'https://github.com/JumpScale/jscockpit.git'
+}
 #prob need more repo's
 
-for url in repos:
+for name, url in repos.items():
     try:
         repo = d.cuisine.git.pullRepo(url, ssh=False)
-        base_name = j.sal.fs.getBaseName(repo)
         d.cuisine.core.run('gitbook install %s' % repo)
-        d.cuisine.core.run('gitbook build %s /var/output/%s' % (repo, base_name))
+        d.cuisine.core.run('gitbook pdf %s /var/output/%s.pdf' % (repo, name))
     except Exception as e:
         logger.warn('Failed to build %s: %s' % (url, e))
         #todo only let errors pass which are authorization errors
