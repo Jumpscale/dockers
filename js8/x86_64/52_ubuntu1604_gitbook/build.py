@@ -19,5 +19,6 @@ d = j.sal.docker.create(name='build',
 d.cuisine.package.ensure('nodejs')
 d.cuisine.package.ensure('npm')
 d.cuisine.core.run('npm install -g gitbook-cli')
+d.cuisine.core.run('ln -s /usr/bin/nodejs /usr/bin/node')
 
 d.commit("jumpscale/%s" % name, delete=True, force=True)
