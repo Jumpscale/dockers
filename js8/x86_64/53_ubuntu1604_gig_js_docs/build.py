@@ -30,7 +30,7 @@ for name, url in repos.items():
     try:
         repo = d.cuisine.git.pullRepo(url, ssh=False)
         d.cuisine.core.run('gitbook install %s' % repo)
-        d.cuisine.core.run('gitbook pdf %s /var/output/%s.pdf' % (repo, name))
+        d.cuisine.core.run('gitbook pdf "%s" "/var/output/%s.pdf"' % (repo, name))
     except Exception as e:
         logger.warn('Failed to build %s: %s' % (url, e))
         #todo only let errors pass which are authorization errors
