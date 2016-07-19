@@ -23,6 +23,8 @@ d = j.sal.docker.create(name='build',
 j.actions.resetAll()
 
 repos = {
+    'IAAS - Compute = OpenVCloud': 'https://github.com/0-complexity/doc_openvcloud_public.git',
+    'IAAS - Storage = OpenVStorage': 'https://github.com/openvstorage/ovs-documentation.git',
     'Automation Framework = Jumpscale': 'https://github.com/Jumpscale/jumpscale_core8.git',
     'Overlay Mgmt Platform = Cockpit': 'https://github.com/JumpScale/jscockpit.git',
     'Identity Management = ItsYouOnline': 'https://github.com/0-complexity/itsyouonline-reference-implementation.git',
