@@ -1,5 +1,9 @@
 from JumpScale import j
 
+dir = j.sal.fs.getDirName(__file__)
+output_dir = j.sal.fs.joinPaths(dir, "output")
+j.sal.fs.createDir(output_dir)
+
 name = 'ubuntu1604_gitbook'
 logger = j.logger.get('j.docker.sandboxer')
 
@@ -9,6 +13,7 @@ base='jumpscale/ubuntu1604_gitbook'
 d = j.sal.docker.create(name='build',
                          stdout=True,
                          base=base,
+                         vols='%s:/var/output' % output_dir,
                          nameserver=['8.8.8.8'],
                          replace=True,
                          myinit=True,
@@ -25,14 +30,14 @@ repos = [
 
 for url in repos:
     try:
-        d.cuisine.git.pullRepo(url, ssh=False)
+        repo = d.cuisine.git.pullRepo(url, ssh=False)
+        base_name = j.sal.fs.getBaseName(repo)
+        d.cuisine.core.run('gitbook build %s /var/output/%s' % (repo, base_name))
     except Exception as e:
+        logger.warn('Failed to build %s: %s' % (url, e))
         #todo only let errors pass which are authorization errors
         #we do this to allow to pull repo's where potentially user has no access too, so it silently passes
         #this allows us to create this script to also build eg. openvcloud docs even if user has no access
-
-
-d.cuisine.package.mdupdate()
 
 #@todo now use the tools as installed in the gitbook docker
 
