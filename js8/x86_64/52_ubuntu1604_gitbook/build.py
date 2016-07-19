@@ -16,6 +16,8 @@ d = j.sal.docker.create(name='build',
                          sharecode=False,
                          setrootrndpasswd=False)
 
+j.actions.resetAll()
+
 d.cuisine.package.ensure('calibre-bin')
 d.cuisine.package.ensure('nodejs')
 d.cuisine.package.ensure('npm')

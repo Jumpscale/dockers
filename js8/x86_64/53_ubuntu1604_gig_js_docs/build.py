@@ -20,6 +20,8 @@ d = j.sal.docker.create(name='build',
                          sharecode=False,
                          setrootrndpasswd=False)
 
+j.actions.resetAll()
+
 repos = {
     'Automation Framework = Jumpscale': 'https://github.com/Jumpscale/jumpscale_core8.git',
     'Overlay Mgmt Platform = Cockpit': 'https://github.com/JumpScale/jscockpit.git'
