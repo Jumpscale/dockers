@@ -1,7 +1,7 @@
 
 from JumpScale import j
 
-name = "ubuntu1604_jscockpit"
+name = "ubuntu1604_development"
 
 d = j.sal.docker.create(name='build',
                         stdout=True,
