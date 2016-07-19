@@ -32,6 +32,7 @@ for url in repos:
     try:
         repo = d.cuisine.git.pullRepo(url, ssh=False)
         base_name = j.sal.fs.getBaseName(repo)
+        d.cuisine.core.run('gitbook install %s' % repo)
         d.cuisine.core.run('gitbook build %s /var/output/%s' % (repo, base_name))
     except Exception as e:
         logger.warn('Failed to build %s: %s' % (url, e))
