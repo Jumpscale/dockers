@@ -4,7 +4,7 @@ name = 'ubuntu1604_sandbox'
 logger = j.logger.get('j.docker.sandboxer')
 
 # base='jumpscale/ubuntu1604_volumedriver'
-base='jumpscale/ubuntu1604_jscockpit'
+base='jumpscale/ubuntu1604_js8_development'
 
 j.actions.resetAll()
 
