@@ -16,6 +16,7 @@ d = j.sal.docker.create(name='build',
                          sharecode=False,
                          setrootrndpasswd=False)
 
+d.cuisine.package.ensure('calibre-bin')
 d.cuisine.package.ensure('nodejs')
 d.cuisine.package.ensure('npm')
 d.cuisine.core.run('npm install -g gitbook-cli')
