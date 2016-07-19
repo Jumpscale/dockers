@@ -1,7 +1,6 @@
 from JumpScale import j
 
-dir = j.sal.fs.getDirName(__file__)
-output_dir = j.sal.fs.joinPaths(dir, "output")
+output_dir = "/opt/docs/"
 j.sal.fs.createDir(output_dir)
 
 name = 'ubuntu1604_gitbook'
@@ -13,7 +12,7 @@ base='jumpscale/ubuntu1604_gitbook'
 d = j.sal.docker.create(name='build',
                          stdout=True,
                          base=base,
-                         vols='%s:/var/output' % output_dir,
+                         vols='/var/output:%s' % output_dir,
                          nameserver=['8.8.8.8'],
                          replace=True,
                          myinit=True,
