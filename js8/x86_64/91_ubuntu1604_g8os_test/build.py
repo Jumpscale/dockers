@@ -1,12 +1,13 @@
 from JumpScale import j
 
-name = "ubuntu1604_g8os"
+name = "ubuntu1604_g8os_test"
 j.actions.resetAll()
 
 logger = j.logger.get('j.docker.sandbox_upload')
+
 d = j.sal.docker.create(name='js8_host',
                         stdout=True,
-                        base='jumpscale/ubuntu1604_sandbox',
+                        base='jumpscale/ubuntu1604',
                         nameserver=['8.8.8.8'],
                         replace=True,
                         myinit=True,
@@ -23,3 +24,5 @@ d.cuisine.core.file_copy('/builder/jumpscale8/templates/cfg/fs/config.toml', '/o
 d.cuisine.core.file_copy('/builder/md/js8_opt.flist', '/optvar/cfg/fs/js8_opt.flist')
 
 d.cuisine.processmanager.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
+
+d.commit("jumpscale/%s" % name, delete=True, force=True)
