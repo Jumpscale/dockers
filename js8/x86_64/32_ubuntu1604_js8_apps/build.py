@@ -19,6 +19,7 @@ d = j.sal.docker.create(name='build',
                         ssh=True,
                         sharecode=False)
 
+j.actions.resetAll()
 d.cuisine.builder.all()
 
 d.commit("jumpscale/%s" % name, delete=True, force=True)
