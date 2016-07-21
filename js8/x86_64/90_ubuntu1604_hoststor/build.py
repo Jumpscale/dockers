@@ -5,7 +5,7 @@ j.actions.resetAll()
 namespace = 'main'
 
 logger = j.logger.get('j.docker.sandbox_upload')
-d = j.sal.docker.create(name='js8_host',
+d = j.sal.docker.create(name='storx',
                         stdout=True,
                         base='jumpscale/ubuntu1604_sandbox',
                         nameserver=['8.8.8.8'],
@@ -34,17 +34,3 @@ pm.ensure(name="storx", cmd=cmd, env={}, path='/opt/jumpscale8/bin', descr='')
 
 if not j.sal.nettools.tcpPortConnectionTest("localhost", 8090):
     raise RuntimeError("cannot connect over tcp to port 8090 on localhost")
-
-#
-# store_client = j.clients.storx.get('http://localhost:8090')
-#
-# #@todo PLEASE COMPLETE
-#
-# from IPython import embed
-# print ("DEBUG NOW sdsd")
-# embed()
-# p
-#
-# #do a test
-# store_client.putFile("test","/storage/builder/sandbox_ub1604/js8/files/a/a/aa6a634cf373728e934b3d6da15759bd.bro")
-#
