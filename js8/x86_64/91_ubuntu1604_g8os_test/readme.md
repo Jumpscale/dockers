@@ -18,3 +18,16 @@ a minimal docker with all inside to serve required files as needed
 Since the g8os fs uses fuse, this usually won't work from inside a docker unless
 the docker is running in privileged mode. Also the `fuse` modules must be installed
 on the host itself and loaded in the kernel.
+
+So to run this docker you need to do something like
+
+```
+docker run [-d -ti] -p 2222:22 --privilged jumpscale/ubuntu1604_g8os_test /sbin/my_init
+```
+
+And when you ssh to the machine, the fs should be mounted under opt.
+
+## Notes:
+This test docker trys to connect to a storx that is reachable over the 
+docker host IP (172.17.0.1:8090). This mean you need to run the `hoststor`
+docker first

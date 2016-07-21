@@ -12,7 +12,6 @@ d = j.sal.docker.create(name='g8os-fs',
                         replace=True,
                         myinit=True,
                         ssh=True,
-                        ports="22:7022 8090:8090",
                         sharecode=False,
                         setrootrndpasswd=False,
                         vols="/builder:/storage/builder/sandbox_ub1604/js8")
