@@ -18,7 +18,7 @@ d = j.sal.docker.create(name='storx',
                         vols="/mnt/aydostorx/namespaces/{namespace}:/storage/builder/sandbox_ub1604/js8/files".format(namespace=namespace))
 
 CONFIG = """
-listen_addr = "localhost:8090"
+listen_addr = "0.0.0.0:8090"
 store_root = "/mnt/aydostorx/"
 """
 
