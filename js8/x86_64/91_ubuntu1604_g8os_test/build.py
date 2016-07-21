@@ -17,6 +17,7 @@ d = j.sal.docker.create(name='js8_host',
                         setrootrndpasswd=False,
                         vols="/builder:/storage/builder/sandbox_ub1604/js8")
 
+d.cuisine.package.ensure('fuse')
 
 d.cuisine.core.file_copy('/builder/jumpscale8/bin/fs', '/usr/local/bin')
 d.cuisine.core.dir_ensure('/optvar/cfg/fs/')
