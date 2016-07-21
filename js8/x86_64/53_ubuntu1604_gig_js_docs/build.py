@@ -1,18 +1,16 @@
 from JumpScale import j
 
-output_dir = "/opt/docs/"
-j.sal.fs.createDir(output_dir)
-
-name = 'ubuntu1604_gitbook'
+name = 'ubuntu1604_git_js_docs'
 logger = j.logger.get('j.docker.sandboxer')
 
 # base='jumpscale/ubuntu1604_volumedriver'
 base='jumpscale/ubuntu1604_gitbook'
+j.sal.btrfs.subvolumeCreate("/storage/builder/docs")
 
-d = j.sal.docker.create(name='build',
+d = j.sal.docker.create(name=name,
                          stdout=True,
                          base=base,
-                         vols='/var/output:%s' % output_dir,
+                         vols='/var/output:/storage/builder/docs',
                          nameserver=['8.8.8.8'],
                          replace=True,
                          myinit=True,
@@ -38,16 +36,3 @@ for name, url in repos.items():
         d.cuisine.core.run('gitbook pdf "%s" "/var/output/%s.pdf"' % (repo, name))
     except Exception as e:
         logger.warn('Failed to build %s: %s' % (url, e))
-        #todo only let errors pass which are authorization errors
-        #we do this to allow to pull repo's where potentially user has no access too, so it silently passes
-        #this allows us to create this script to also build eg. openvcloud docs even if user has no access
-
-#@todo now use the tools as installed in the gitbook docker
-
-#build all docs with right names as used in 
-#https://box.greenitglobe.com/apps/files/?dir=%2FProjects%2Fsberbank%2FSberbankShare%2FDocumentation
-#everything which is specified there needs to be build (when md format !)
-#when generated docs e.g. out or raml do that generation in this script too, so it really starts from the source code of all our components
-
-
-
