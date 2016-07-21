@@ -2,7 +2,7 @@ from JumpScale import j
 
 j.actions.resetAll()
 
-namespace = 'main'
+namespace = 'js8_opt'
 
 logger = j.logger.get('j.docker.sandbox_upload')
 d = j.sal.docker.create(name='storx',
