@@ -24,19 +24,12 @@ d = j.sal.docker.create(name='build',
 
 
 d.cuisine.installer.base()
-
-from IPython import embed
-print ("DEBUG NOW sdsds")
-embed()
-p
-
-
 d.cuisine.installerdevelop.python()
 d.cuisine.installerdevelop.pip()
 d.cuisine.installerdevelop.installJS8Deps()
 
 # make sure brotli is installed
-if not d1.cuisine.core.command_check('bro'):
+if not d.cuisine.core.command_check('bro'):
     bro_script = """
     cd $tmpDir; git clone https://github.com/google/brotli.git
     cd $tmpDir/brotli/
@@ -44,7 +37,7 @@ if not d1.cuisine.core.command_check('bro'):
     make bro
     cp bin/bro $binDir/bro
     """
-    d1.cuisine.core.run_script(bro_script)
+    d.cuisine.core.run_script(bro_script)
 
 d.cuisine.installerdevelop.cleanup()
 
