@@ -22,15 +22,13 @@ def docker(reset=False):
     return d
 
 def base(push=True,reset=True):
-    name="ubuntu1604_js"
     d.cuisine.installer.base()
     d.cuisine.installerdevelop.python()
     d.cuisine.installerdevelop.pip()
     d.cuisine.installerdevelop.installJS8Deps()
 
-    d.cuisine.installerdevelop.cleanup()
-
     if reset:
+        d.cuisine.installerdevelop.cleanup()
         d.commit("jumpscale/ubuntu1604_js", delete=True, force=True,push=push)
 
 
@@ -68,18 +66,20 @@ if reset:
     cleanup()
     d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True,push=True)
 
-d.cuisine.golang.install()
+d.cuisine.golang.install(force=True)
 
 if reset: #can only commit/push when we stared from clean slate
     cleanup()
     d.commit("jumpscale/ubuntu1604_golang", delete=True, force=True,push=True)
+
+d.cuisine.apps.caddy.install(start=False)
 
 d.cuisine.apps.portal.install(start=False)
 d.cuisine.apps.mongodb.build(start=False)
 
 d.cuisine.apps.grafana.build(start=False)
 d.cuisine.apps.controller.build(start=False)
-d.cuisine.apps.caddy.build(start=False)
+
 d.cuisine.apps.stor.build(start=False)
 d.cuisine.apps.cockpit.build(start=False)
 
@@ -95,5 +95,6 @@ cleanup()
 #this is the full one, we can commit
 d.commit("jumpscale/ubuntu1604_js_development", delete=True, force=True,push=True)
 
+d.cuisine.sandbox.do("/out")
 
 
