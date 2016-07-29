@@ -9,7 +9,7 @@ d = j.sal.docker.create(name='build',
                         vols=vols,
                         volsro='',
                         stdout=True,
-                        base='jumpscale/ubuntu1604_js8apps',
+                        base='jumpscale/ubuntu1604_js8',
                         nameserver=['8.8.8.8'],
                         replace=True,
                         cpu=None,
@@ -22,5 +22,8 @@ name = "ubuntu1604_golang"
 
 j.actions.resetAll()
 d.cuisine.golang.install()
+
+d.cuisine.installerdevelop.jumpscale8()
+
 
 d.commit("jumpscale/%s" % name, delete=True, force=True)

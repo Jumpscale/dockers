@@ -40,6 +40,8 @@ d.cuisine.package.install('shellinabox')
 bin_path = d.cuisine.bash.cmdGetPath('shellinaboxd')
 d.cuisine.core.file_copy(bin_path, "$binDir")
 
+d.cuisine.apps.fs.build(start=False)
+
 d.cuisine.core.dir_remove("$goDir/src/*")
 d.cuisine.core.dir_remove("$tmpDir/*")
 d.cuisine.core.dir_remove("$varDir/data/*")

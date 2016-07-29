@@ -25,4 +25,6 @@ j.actions.resetAll()
 
 d.cuisine.installerdevelop.jumpscale8()
 
+
+
 d.commit("jumpscale/%s" % name, delete=True, force=True)

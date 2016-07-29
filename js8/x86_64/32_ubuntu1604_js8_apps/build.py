@@ -20,6 +20,11 @@ d = j.sal.docker.create(name='build',
                         sharecode=False)
 
 j.actions.resetAll()
+
+#@todo why do we do this???
 d.cuisine.builder.all()
+
+d.cuisine.installerdevelop.jumpscale8()
+
 
 d.commit("jumpscale/%s" % name, delete=True, force=True)
