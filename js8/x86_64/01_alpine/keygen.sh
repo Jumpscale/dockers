@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv ash
+#!/usr/bin/env ash
 
 # A Truely diligent dockerfile would put these steps in separate scripts!
 # See: https://github.com/just-containers/s6-overlay#usage

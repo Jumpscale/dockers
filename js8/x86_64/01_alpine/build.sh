@@ -4,7 +4,9 @@ cd /tmp
 apk upgrade
 apk update
 
-apk add openssh rsync mc curl git tmux sudo bash openssl
+apk add openssh rsync mc curl git tmux sudo bash openssl ca-certificates libstdc++
+update-ca-certificates
+
 mkdir -p ~root/.ssh && chmod 700 ~root/.ssh/
 sed -i '/AuthorizedKeysFile/s/^/#/' /etc/ssh/sshd_config
 echo -e "Port 22\n" >> /etc/ssh/sshd_config
