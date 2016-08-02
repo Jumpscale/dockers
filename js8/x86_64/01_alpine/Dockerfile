@@ -1,5 +1,5 @@
 #Dockerfile for https://github.com/Gaff/alpine-sshd
-FROM frolvlad/alpine-base
+FROM frolvlad/alpine-glibc
 
 #Build script installs sshd
 COPY build.sh /build.sh
