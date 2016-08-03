@@ -30,7 +30,7 @@ pm.ensure(name="aydofs", cmd=cmd, env={}, path='/', descr='')
 time.sleep(2)
 
 # start redis
-cmd = '$binDir/redis-server'
+cmd = '$binDir/redis-server --protected-mode no'
 pm.ensure(name='redis', cmd=cmd, env={}, path='/', descr='')
 
 # copy controller template config
