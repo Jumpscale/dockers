@@ -15,6 +15,8 @@ COPY keygen.sh /etc/cont-init.d/keygen
 RUN chmod 755 /etc/cont-init.d/keygen
 
 EXPOSE 22
+WORKDIR /etc/ssh
+RUN ssh-keygen -A
 
 #-D = don't detach, -e = output to stderr, -f = config file
 CMD [ "/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config"]
