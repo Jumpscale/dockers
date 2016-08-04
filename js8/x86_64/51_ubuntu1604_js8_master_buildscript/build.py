@@ -306,6 +306,9 @@ reset=False
 # d.cuisine.apps.controller.build(start=False)
 # d.cuisine.apps.core.build(start=False)
 
+d.cuisine.apps.alba.build(start=False)
+d.cuisine.apps.volumedriver.build(start=False)
+
 # d.cuisine.apps.stor.build(start=False)
 # d.cuisine.apps.cockpit.build(start=False)
 
