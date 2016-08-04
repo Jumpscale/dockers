@@ -162,12 +162,35 @@ def storhost():
 
     d.cuisine.core.file_write("/etc/js_storx.toml", CONFIG)
 
-    pm = d.cuisine.processmanager.get(pm="tmux")
+    # pm = d.cuisine.processmanager.get(pm="tmux")
     cmd="./stor -c /etc/js_storx.toml"
-    pm.ensure(name="storx", cmd=cmd, env={}, path='/opt/jumpscale8/bin', descr='')
+    # pm.ensure(name="g8stor", cmd=cmd, env={}, path='/opt/jumpscale8/bin', descr='')
+
+    d.cuisine.processmanager.ensure('g8stor', cmd, path='/opt/jumpscale8/bin')
+
 
     if not j.sal.nettools.tcpPortConnectionTest("localhost", 8090):
         raise RuntimeError("cannot connect over tcp to port 8090 on localhost")
+
+    d.commit("jumpscale/g8stor", delete=True, force=True,push=False)    
+
+    d.destroy()
+
+    d = j.sal.docker.create(name="g8stor",
+                            stdout=True,
+                            base='jumpscale/g8stor',
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            ssh=True,
+                            ports="22:7022 8090:8090",
+                            privileged=True,
+                            setrootrndpasswd=True,
+                            weavenet=True)    
+
+
+    if not j.sal.nettools.tcpPortConnectionTest("localhost", 8090):
+        raise RuntimeError("cannot connect over tcp to port 8090 on localhost after launching g8stor in docker.")
+
 
 def js8fs():
 
@@ -203,7 +226,8 @@ def js8fs():
     [aydostor]
     [aydostor.public]
         #use the IP of the docker host.
-        addr="http://172.17.0.1:8090"
+        #addr="http://172.17.0.1:8090"
+        addr="http://g8stor:8090"
         login=""
         passwd=""
     '''
@@ -216,11 +240,32 @@ def js8fs():
 
     cleanup(aggressive=True,cuisine=d)
 
-    pm = d.cuisine.processmanager.get(pm="tmux")
-    pm.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
-    # d.cuisine.processmanager.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
+    # pm = d.cuisine.processmanager.get(pm="tmux")
+    # pm.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
+    d.cuisine.processmanager.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
 
-    # d.commit("jumpscale/%s" % name, delete=True, force=True)
+    d.commit("jumpscale/g8fs", delete=True, force=True,push=False)
+
+    d.destroy()
+
+    d = j.sal.docker.create(name="g8fs",
+                            stdout=True,
+                            base='jumpscale/g8fs',
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            ssh=True,
+                            privileged=True,
+                            setrootrndpasswd=True,
+                            weavenet=True)  
+
+    s="""
+        set -ex
+        cd /opt/jumpscale8
+        source env.sh
+        js 'j.tools.console.echo("SUCCEEDED")'
+        """
+    d.cuisine.core.run_script(s)
+
 
 
 def enableWeave():
@@ -229,13 +274,13 @@ def enableWeave():
     
 
 #### ARGS
-push=True
+push=False
 reset=False
 
 
 #### MAIN
 
-d=docker(reset=reset)
+# d=docker(reset=reset)
 
 # base(push=push,reset=reset)
 
@@ -258,8 +303,8 @@ d=docker(reset=reset)
 # d.cuisine.apps.mongodb.build(start=False)
 
 # d.cuisine.apps.grafana.build(start=False)
-d.cuisine.apps.controller.build(start=False)
-d.cuisine.apps.core.build(start=False)
+# d.cuisine.apps.controller.build(start=False)
+# d.cuisine.apps.core.build(start=False)
 
 # d.cuisine.apps.stor.build(start=False)
 # d.cuisine.apps.cockpit.build(start=False)
@@ -272,21 +317,24 @@ d.cuisine.apps.core.build(start=False)
 
 # d.cuisine.apps.fs.build(start=False)
 
-cleanup(cuisine=d)
+# cleanup(cuisine=d)
 #this is the full one, we can commit
-d.commit("jumpscale/ubuntu1604_js_development", delete=True, force=True,push=True)
+# d.commit("jumpscale/ubuntu1604_js_development", delete=True, force=True,push=True)
 
 #start from committed js_development docker
-d = j.sal.docker.create(name='build',base="jumpscale/ubuntu1604_js_development",replace=True,ssh=True,setrootrndpasswd=False,vols="/out:/storage/builder/sandbox_ub1604")
+# d = j.sal.docker.create(name='build',base="jumpscale/ubuntu1604_js_development",replace=True,ssh=True,setrootrndpasswd=False,vols="/out:/storage/builder/sandbox_ub1604")
 
-sandbox(d)
+# d = j.sal.docker.create(name='g8stor',base="jumpscale/ubuntu1604_js_development",replace=True,ssh=True,setrootrndpasswd=False,vols="/out:/storage/builder/sandbox_ub1604")
+
+
+# sandbox(d)
 
 #will create a docker where all sandboxed files are in, can be used without the js8_fs
-sandbox_docker(push=push)
+# sandbox_docker(push=push)
 
-#host a docker which becomes the host for our js8
-#@todo next don't work
+#host a docker which becomes the host for our G8OS FS
 storhost()
+#now connect to our G8OS STOR
 js8fs()
 
 
