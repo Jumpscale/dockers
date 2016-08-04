@@ -43,6 +43,9 @@ def cleanup(aggressive=False,cuisine=None):
     d.cuisine.core.dir_remove("$goDir/src/*",force=True)
     d.cuisine.core.dir_remove("$tmpDir/*",force=True)
     d.cuisine.core.dir_remove("$varDir/data/*",force=True)
+    d.cuisine.core.dir_remove('/opt/code/github/domsj',True)
+    d.cuisine.core.dir_remove('/opt/code/github/openvstorage',True)
+
     d.cuisine.installerdevelop.cleanup()
     C="""
     cd /opt;find . -name '*.pyc' -delete
@@ -174,18 +177,17 @@ def storhost():
 
     d.commit("jumpscale/g8stor", delete=True, force=True,push=False)    
 
-    d.destroy()
-
     d = j.sal.docker.create(name="g8stor",
                             stdout=True,
                             base='jumpscale/g8stor',
                             nameserver=['8.8.8.8'],
                             replace=True,
                             ssh=True,
-                            ports="22:7022 8090:8090",
+                            ports="22:7032 8090:8090",
                             privileged=True,
-                            setrootrndpasswd=True,
-                            weavenet=True)    
+                            setrootrndpasswd=False,
+                            weavenet=True,
+                            vols="/mnt/aydostorx/namespaces/{namespace}:/storage/builder/sandbox_ub1604/js8/files".format(namespace=namespace))
 
 
     if not j.sal.nettools.tcpPortConnectionTest("localhost", 8090):
@@ -238,13 +240,13 @@ def js8fs():
     d.cuisine.core.file_write('/optvar/cfg/fs/config.toml', config)
     d.cuisine.core.file_copy('/builder/md/js8_opt.flist', '/optvar/cfg/fs/js8_opt.flist')
 
-    cleanup(aggressive=True,cuisine=d)
+    cleanup(aggressive=False, cuisine=d)
 
     # pm = d.cuisine.processmanager.get(pm="tmux")
     # pm.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
-    d.cuisine.processmanager.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
+    d.cuisine.processmanager.ensure('g8fs', cmd='/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
 
-    d.commit("jumpscale/g8fs", delete=True, force=True,push=False)
+    d.commit("jumpscale/g8fs", delete=True, force=True, push=False)
 
     d.destroy()
 
@@ -252,7 +254,9 @@ def js8fs():
                             stdout=True,
                             base='jumpscale/g8fs',
                             nameserver=['8.8.8.8'],
+                            myinit=True,
                             replace=True,
+                            ports="22:7033",
                             ssh=True,
                             privileged=True,
                             setrootrndpasswd=True,
@@ -267,7 +271,6 @@ def js8fs():
     d.cuisine.core.run_script(s)
 
 
-
 def enableWeave():
     j.sal.docker.weaveInstall(ufw=True)
 
@@ -280,7 +283,7 @@ reset=False
 
 #### MAIN
 
-# d=docker(reset=reset)
+#d = docker(reset=reset)
 
 # base(push=push,reset=reset)
 
@@ -306,8 +309,8 @@ reset=False
 # d.cuisine.apps.controller.build(start=False)
 # d.cuisine.apps.core.build(start=False)
 
-d.cuisine.apps.alba.build(start=False)
-d.cuisine.apps.volumedriver.build(start=False)
+# d.cuisine.apps.alba.build(start=False)
+# d.cuisine.apps.volumedriver.build(start=False)
 
 # d.cuisine.apps.stor.build(start=False)
 # d.cuisine.apps.cockpit.build(start=False)
@@ -320,7 +323,7 @@ d.cuisine.apps.volumedriver.build(start=False)
 
 # d.cuisine.apps.fs.build(start=False)
 
-# cleanup(cuisine=d)
+#cleanup(cuisine=d)
 #this is the full one, we can commit
 # d.commit("jumpscale/ubuntu1604_js_development", delete=True, force=True,push=True)
 
@@ -330,13 +333,13 @@ d.cuisine.apps.volumedriver.build(start=False)
 # d = j.sal.docker.create(name='g8stor',base="jumpscale/ubuntu1604_js_development",replace=True,ssh=True,setrootrndpasswd=False,vols="/out:/storage/builder/sandbox_ub1604")
 
 
-# sandbox(d)
+#sandbox(d)
 
 #will create a docker where all sandboxed files are in, can be used without the js8_fs
 # sandbox_docker(push=push)
 
 #host a docker which becomes the host for our G8OS FS
-storhost()
+#storhost()
 #now connect to our G8OS STOR
 js8fs()
 

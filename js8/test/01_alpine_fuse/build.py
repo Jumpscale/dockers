@@ -20,7 +20,7 @@ config = '''\
     path="/opt"
     flist="/etc/fs/js8_opt.flist"
     backend="opt"
-    mode="RO"
+    mode="OL"
     trim_base=true
 [backend]
 [backend.opt]
