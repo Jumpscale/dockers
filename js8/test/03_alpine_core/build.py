@@ -36,7 +36,7 @@ include = "$cfgDir/core/conf"
 
 [controllers]
 [controllers.main]
-url = "http://172.17.0.1:8966"
+url = "http://alpine_controller:8966"
 
 [channel]
 cmds = [] # empty for long polling from all defined controllers, or specif controllers keys
