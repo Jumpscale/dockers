@@ -33,7 +33,7 @@ config = '''\
 [aydostor]
 [aydostor.public]
     #use the IP of the docker host.
-    addr="http://172.17.0.1:8090"
+    addr="http://g8stor:8090"
     login=""
     passwd=""
 '''

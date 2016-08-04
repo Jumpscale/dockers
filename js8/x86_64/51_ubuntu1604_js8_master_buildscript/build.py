@@ -339,7 +339,7 @@ reset=False
 # sandbox_docker(push=push)
 
 #host a docker which becomes the host for our G8OS FS
-#storhost()
+storhost()
 #now connect to our G8OS STOR
 js8fs()
 
