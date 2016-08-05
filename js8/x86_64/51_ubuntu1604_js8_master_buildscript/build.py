@@ -17,8 +17,7 @@ def docker(reset=False):
                              myinit=True,
                              ssh=True,
                              sharecode=False,
-                             setrootrndpasswd=False,
-                             vols="/out:/storage/builder/sandbox_ub1604")  
+                             setrootrndpasswd=False)
 
     return d
 
@@ -88,20 +87,55 @@ def cleanup(aggressive=False,cuisine=None):
         """
         d.cuisine.core.run_script(C)
 
-def sandbox(d):
+def sandbox(push):
+
+
+    #create new docker to do the sandboxing in, needs to start from the development sandbox
+    d = j.sal.docker.create(name='sandboxer',
+                        stdout=True,
+                        base='jumpscale/ubuntu1604_js_development',
+                        nameserver=['8.8.8.8'],
+                        replace=True,
+                        myinit=True,
+                        ssh=True,
+                        sharecode=False,
+                        setrootrndpasswd=False,weavenet=False,
+                        vols="/out:/storage/builder/sandbox_ub1604")  
+
 
     #copy brotli compression tool
     s="""
     set -ex
     cd /opt/jumpscale8/bin
     cp /usr/local/bin/bro .
+    cp /usr/bin/tarantool* .
+    cp /usr/bin/lua* .
+    cp /usr/local/bin/capnp* .
+    cp /usr/local/lib/luarocks/rocks/lua-capnproto/0.1.3-1/bin/* .
+    cp /usr/local/lib/luarocks/rocks/lua-cjson/2.1.0-1/bin/* .
+    cp /usr/local/lib/libluajit-5.1.so .
+    cp /usr/local/lib/lua/5.1/* .    
+
+    rsync -rv /usr/local/share/lua/5.1/ /opt/jumpscale8/lib/lua/
+    rsync -rv /usr/local/share/luajit-2.1.0-beta2/ /opt/jumpscale8/lib/lua/
+
+    mkdir -p /opt/jumpscale8/lib/lua/luarocks/ 
+    rsync -rv /usr/share/lua/5.1/luarocks/ /opt/jumpscale8/lib/lua/luarocks/
+
+    mkdir -p /opt/jumpscale8/lib/lua/tarantool/
+    rsync -rv /usr/share/tarantool/ /opt/jumpscale8/lib/lua/tarantool/
+
     """
     d.cuisine.core.run_script(s)
 
     d.cuisine.sandbox.do("/out")
+    #remove docker
+    d.destroy()
 
-def sandbox_docker(push):
-
+def build_docker_fromsandbox(push):
+    """
+    rsync files back after sandbox to a small ubuntu
+    """
 
     d = j.sal.docker.create(name='js8_sandbox',
                              stdout=True,
@@ -193,7 +227,6 @@ def storhost():
     if not j.sal.nettools.tcpPortConnectionTest("localhost", 8090):
         raise RuntimeError("cannot connect over tcp to port 8090 on localhost after launching g8stor in docker.")
 
-
 def js8fs():
 
     name = "ubuntu1604_g8os_base"
@@ -270,7 +303,6 @@ def js8fs():
         """
     d.cuisine.core.run_script(s)
 
-
 def enableWeave():
     j.sal.docker.weaveInstall(ufw=True)
 
@@ -281,7 +313,7 @@ push=False
 reset=False
 
 
-#### MAIN
+#### MAIN all the build steps
 
 #d = docker(reset=reset)
 
@@ -325,23 +357,23 @@ reset=False
 
 #cleanup(cuisine=d)
 #this is the full one, we can commit
+
 # d.commit("jumpscale/ubuntu1604_js_development", delete=True, force=True,push=True)
-
-#start from committed js_development docker
-# d = j.sal.docker.create(name='build',base="jumpscale/ubuntu1604_js_development",replace=True,ssh=True,setrootrndpasswd=False,vols="/out:/storage/builder/sandbox_ub1604")
-
-# d = j.sal.docker.create(name='g8stor',base="jumpscale/ubuntu1604_js_development",replace=True,ssh=True,setrootrndpasswd=False,vols="/out:/storage/builder/sandbox_ub1604")
+# d.destroy()
 
 
-#sandbox(d)
+
+#### MAIN all the build steps
+
+sandbox(push=push)
 
 #will create a docker where all sandboxed files are in, can be used without the js8_fs
-# sandbox_docker(push=push)
+build_docker_fromsandbox(push=push)
 
 #host a docker which becomes the host for our G8OS FS
-storhost()
+# storhost()
 #now connect to our G8OS STOR
-js8fs()
+# js8fs()
 
 
 
