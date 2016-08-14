@@ -102,10 +102,13 @@ def sandbox(push):
                         setrootrndpasswd=False,weavenet=False,
                         vols="/out:/storage/builder/sandbox_ub1604")  
 
-
-    #copy brotli compression tool
+    #copy tools & update
     s="""
     set -ex
+    cd /opt/code/github/jumpscale/jumpscale_core8/;git checkout . -f; git pull
+    cd /opt/code/github/jumpscale/jumpscale_portal8/;git checkout . -f; git pull
+    cd /opt/code/github/jumpscale/ays_jumpscale8/;git checkout . -f; git pull
+
     cd /opt/jumpscale8/bin
     cp /usr/local/bin/bro .
     cp /usr/bin/tarantool* .
@@ -315,7 +318,7 @@ reset=False
 
 #### MAIN all the build steps
 
-#d = docker(reset=reset)
+d = docker(reset=reset)
 
 # base(push=push,reset=reset)
 
@@ -334,18 +337,7 @@ reset=False
 
 # d.cuisine.apps.caddy.install(start=False)
 
-# d.cuisine.apps.portal.install(start=False)
 # d.cuisine.apps.mongodb.build(start=False)
-
-# d.cuisine.apps.grafana.build(start=False)
-# d.cuisine.apps.controller.build(start=False)
-# d.cuisine.apps.core.build(start=False)
-
-# d.cuisine.apps.alba.build(start=False)
-# d.cuisine.apps.volumedriver.build(start=False)
-
-# d.cuisine.apps.stor.build(start=False)
-# d.cuisine.apps.cockpit.build(start=False)
 
 # d.cuisine.apps.influxdb.install()  
 
@@ -353,13 +345,38 @@ reset=False
 
 # d.cuisine.lua.install_lua_tarantool()
 
-# d.cuisine.apps.fs.build(start=False)
+d.cuisine.apps.portal.install(start=False)
 
-#cleanup(cuisine=d)
+from pudb import set_trace; set_trace() 
+
+
+d.cuisine.apps.grafana.build(start=False)
+d.cuisine.apps.controller.build(start=False)
+d.cuisine.apps.core.build(start=False)
+
+from pudb import set_trace; set_trace() 
+
+d.cuisine.apps.alba.build(start=False)
+d.cuisine.apps.volumedriver.build(start=False)
+
+from pudb import set_trace; set_trace() 
+
+d.cuisine.apps.stor.build(start=False)
+
+from pudb import set_trace; set_trace() 
+
+d.cuisine.apps.cockpit.build(start=False)
+
+from pudb import set_trace; set_trace() 
+
+
+d.cuisine.apps.fs.build(start=False)
+
+cleanup(cuisine=d)
 #this is the full one, we can commit
 
-# d.commit("jumpscale/ubuntu1604_js_development", delete=True, force=True,push=True)
-# d.destroy()
+d.commit("jumpscale/ubuntu1604_js_development", delete=True, force=True,push=True)
+d.destroy()
 
 
 
