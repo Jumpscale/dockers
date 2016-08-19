@@ -1,42 +1,39 @@
 
 from JumpScale import j
 
+j.data.cache.reset()  # make sure cache is gone
 
-def docker(reset=False):
-    if reset:
-        j.actions.resetAll()
+
+def base(push=True):
+
+    def shellinabox(d):
+        d.cuisine.package.install('shellinabox')
+        bin_path = d.cuisine.bash.cmdGetPath('shellinaboxd')
+        d.cuisine.core.file_copy(bin_path, "$binDir")
 
     j.sal.btrfs.subvolumeCreate("/storage/builder")
     j.sal.btrfs.subvolumeCreate("/storage/builder/sandbox_ub1604")
 
-    d = j.sal.docker.create(name='build_base',
+    d = j.sal.docker.create(name='build',
                             stdout=True,
                             base="jumpscale/ubuntu1604",
                             nameserver=['8.8.8.8'],
-                            replace=reset,
+                            replace=True,
                             myinit=True,
                             ssh=True,
                             sharecode=False,
                             setrootrndpasswd=False)
 
-    return d
-
-
-def base(push=True, reset=True):
     d.cuisine.installer.base()
     d.cuisine.installerdevelop.python()
     d.cuisine.installerdevelop.pip()
     d.cuisine.installerdevelop.installJS8Deps()
+    d.cuisine.apps.redis.build()
 
-    if reset:
-        d.cuisine.installerdevelop.cleanup()
-        d.commit("jumpscale/ubuntu1604_js", delete=True, force=True, push=push)
+    shellinabox(d)
 
-
-def shellinabox():
-    d.cuisine.package.install('shellinabox')
-    bin_path = d.cuisine.bash.cmdGetPath('shellinaboxd')
-    d.cuisine.core.file_copy(bin_path, "$binDir")
+    d.cuisine.installerdevelop.cleanup()
+    d.commit("jumpscale/ubuntu1604_base", delete=True, force=True, push=push)
 
 
 def cleanup(aggressive=False, cuisine=None):
@@ -89,6 +86,138 @@ def cleanup(aggressive=False, cuisine=None):
         rm -rf /usr/bin/python*
         """
         d.cuisine.core.run_script(C)
+
+
+def jumpscale(push=True):
+    d = j.sal.docker.create(name='build',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_base",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False)
+
+    d.cuisine.installerdevelop.jumpscale8()
+    cleanup(cuisine=d)
+    d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True, push=True)
+
+
+def golang(push=True):
+    d = j.sal.docker.create(name='build',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_js8",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False)
+
+    d.cuisine.golang.install()
+    cleanup(cuisine=d)
+    d.commit("jumpscale/ubuntu1604_golang", delete=True, force=True, push=True)
+
+
+def stats(push=True):
+    d = j.sal.docker.create(name='build',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_golang",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False)
+
+    d.cuisine.apps.mongodb.build(start=False)
+
+    d.cuisine.apps.influxdb.install()
+
+    d.cuisine.apps.grafana.build(start=False)
+
+    cleanup(cuisine=d)
+    d.commit("jumpscale/ubuntu1604_stats", delete=True, force=True, push=push)
+
+
+def portal(push=True):
+    d = j.sal.docker.create(name='build',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_stats",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False)
+
+    d.cuisine.apps.portal.install(start=False)
+
+    cleanup(cuisine=d)
+    d.commit("jumpscale/ubuntu1604_portal", delete=True, force=True, push=push)
+
+
+def all(push=True):
+    d = j.sal.docker.create(name='build',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_stats",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False)
+
+    d.cuisine.apps.caddy.install(start=False)
+
+    d.cuisine.geodns.install()
+
+    d.cuisine.lua.install_lua_tarantool()
+
+    d.cuisine.apps.controller.build(start=False)
+    d.cuisine.apps.core.build(start=False)
+
+    d.cuisine.apps.fs.build(start=False)
+    d.cuisine.apps.stor.build(start=False)
+
+    cleanup(cuisine=d)
+    d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push)
+
+
+def cockpit(push=True):
+    d = j.sal.docker.create(name='build_phase2',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_all",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False)
+
+    d.cuisine.apps.cockpit.build(start=False)
+
+    cleanup(cuisine=d)
+    d.commit("jumpscale/ubuntu1604_cockpit", delete=True, force=True, push=push)
+
+
+def ovs(push=True):
+    d = j.sal.docker.create(name='build_phase2',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_all",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False)
+
+    d.cuisine.apps.alba.build(start=False)
+    d.cuisine.apps.volumedriver.build(start=False)
+
+    cleanup(cuisine=d)
+    d.commit("jumpscale/ubuntu1604_ovs", delete=True, force=True, push=push)
 
 
 def sandbox(push):
@@ -313,88 +442,14 @@ def js8fs():
 def enableWeave():
     j.sal.docker.weaveInstall(ufw=True)
 
-
-# ARGS
-push = True
-reset = True
-
-
-# MAIN all the build steps
-
-d = docker(reset=reset)
-
-base(push=push, reset=reset)
-
-shellinabox()
-
-from pudb import set_trace
-set_trace()
-
-d.cuisine.installerdevelop.jumpscale8()
-if reset:
-    cleanup(cuisine=d)
-    d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True, push=True)
-
-from pudb import set_trace
-set_trace()
-
-
-d.cuisine.golang.install(force=True)
-
-if reset:  # can only commit/push when we stared from clean slate
-    cleanup(cuisine=d)
-    d.commit("jumpscale/ubuntu1604_golang", delete=True, force=True, push=True)
-
-d.cuisine.apps.caddy.install(start=False)
-
-d.cuisine.apps.mongodb.build(start=False)
-
-d.cuisine.apps.influxdb.install()
-
-d.cuisine.geodns.install()
-
-d.cuisine.lua.install_lua_tarantool()
-
-d.cuisine.apps.portal.install(start=False)
-
-from pudb import set_trace
-set_trace()
-
-
-d.cuisine.apps.grafana.build(start=False)
-d.cuisine.apps.controller.build(start=False)
-d.cuisine.apps.core.build(start=False)
-
-from pudb import set_trace
-set_trace()
-
-d.cuisine.apps.alba.build(start=False)
-d.cuisine.apps.volumedriver.build(start=False)
-
-from pudb import set_trace
-set_trace()
-
-d.cuisine.apps.stor.build(start=False)
-
-from pudb import set_trace
-set_trace()
-
-d.cuisine.apps.cockpit.build(start=False)
-
-from pudb import set_trace
-set_trace()
-
-
-d.cuisine.apps.fs.build(start=False)
-
-cleanup(cuisine=d)
-# this is the full one, we can commit
-
-d.commit("jumpscale/ubuntu1604_js_development", delete=True, force=True, push=True)
-d.destroy()
-
-
-# MAIN all the build steps
+base()
+jumpscale()
+golang()
+stats()
+# portal()
+all()
+# cockpit()
+# ovs()
 
 sandbox(push=push)
 
