@@ -6,6 +6,7 @@ j.data.cache.reset()  # make sure cache is gone
 
 def base(push=True):
 
+    # move to app in cuisine under apps and call from here
     def shellinabox(d):
         d.cuisine.package.install('shellinabox')
         bin_path = d.cuisine.bash.cmdGetPath('shellinaboxd')
@@ -24,15 +25,16 @@ def base(push=True):
                             sharecode=False,
                             setrootrndpasswd=False)
 
-    d.cuisine.installer.base()
-    d.cuisine.installerdevelop.python()
-    d.cuisine.installerdevelop.pip()
-    d.cuisine.installerdevelop.installJS8Deps()
+    # makes sure we build redis in stead of using from system which is default behaviour
     d.cuisine.apps.redis.build()
 
+    # install base, python, pip3, ...
+    d.cuisine.development.js8.installDeps()
+
+    # call cuisine method
     shellinabox(d)
 
-    d.cuisine.installerdevelop.cleanup()
+    d.cuisine.tools.sandbox.cleanup()()
     d.commit("jumpscale/ubuntu1604_base", delete=True, force=True, push=push)
 
 
@@ -47,8 +49,8 @@ def jumpscale(push=True):
                             sharecode=False,
                             setrootrndpasswd=False)
 
-    d.cuisine.installerdevelop.jumpscale8()
-    d.cuisine.installerdevelop.cleanup()
+    d.cuisine.development.js8.install(deps=False)
+    d.cuisine.tools.sandbox.cleanup()()
     d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True, push=True)
 
 
@@ -63,8 +65,8 @@ def golang(push=True):
                             sharecode=False,
                             setrootrndpasswd=False)
 
-    d.cuisine.golang.install()
-    d.cuisine.installerdevelop.cleanup()
+    d.cuisine.development.golang.install()
+    d.cuisine.tools.sandbox.cleanup()()
     d.commit("jumpscale/ubuntu1604_golang", delete=True, force=True, push=True)
 
 
@@ -85,7 +87,7 @@ def stats(push=True):
 
     d.cuisine.apps.grafana.build(start=False)
 
-    d.cuisine.installerdevelop.cleanup()
+    d.cuisine.tools.sandbox.cleanup()()
     d.commit("jumpscale/ubuntu1604_stats", delete=True, force=True, push=push)
 
 
@@ -102,7 +104,7 @@ def portal(push=True):
 
     d.cuisine.apps.portal.install(start=False)
 
-    d.cuisine.installerdevelop.cleanup()
+    d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_portal", delete=True, force=True, push=push)
 
 
@@ -129,7 +131,7 @@ def all(push=True):
     d.cuisine.apps.fs.build(start=False)
     d.cuisine.apps.stor.build(start=False)
 
-    d.cuisine.installerdevelop.cleanup()
+    d.cuisine.tools.sandbox.cleanup()()
     d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push)
 
 
@@ -146,7 +148,7 @@ def cockpit(push=True):
 
     d.cuisine.apps.cockpit.build(start=False)
 
-    d.cuisine.installerdevelop.cleanup()
+    d.cuisine.tools.sandbox.cleanup()()
     d.commit("jumpscale/ubuntu1604_cockpit", delete=True, force=True, push=push)
 
 
@@ -164,7 +166,7 @@ def ovs(push=True):
     d.cuisine.apps.alba.build(start=False)
     d.cuisine.apps.volumedriver.build(start=False)
 
-    d.cuisine.installerdevelop.cleanup()
+    d.cuisine.tools.sandbox.cleanup()()
     d.commit("jumpscale/ubuntu1604_ovs", delete=True, force=True, push=push)
 
 
@@ -252,7 +254,7 @@ def build_docker_fromsandbox(push):
         d.cuisine.core.file_write("/root/.profile", prof)
 
     # clean stuff we don't need
-    d.cuisine.installerdevelop.cleanup()
+    d.cuisine.tools.sandbox.cleanup()()
 
     d.commit("jumpscale/ubuntu1604_sandbox", delete=True, force=True, push=push)
     print("sandbox docker committed")
@@ -356,7 +358,7 @@ def js8fs():
     d.cuisine.core.file_write('/optvar/cfg/fs/config.toml', config)
     d.cuisine.core.file_copy('/builder/md/js8_opt.flist', '/optvar/cfg/fs/js8_opt.flist')
 
-    d.cuisine.installerdevelop.cleanup()
+    d.cuisine.tools.sandbox.cleanup()()
 
     # pm = d.cuisine.processmanager.get(pm="tmux")
     # pm.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
