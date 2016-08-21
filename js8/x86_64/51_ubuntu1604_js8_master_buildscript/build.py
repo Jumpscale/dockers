@@ -36,58 +36,6 @@ def base(push=True):
     d.commit("jumpscale/ubuntu1604_base", delete=True, force=True, push=push)
 
 
-def cleanup(aggressive=False, cuisine=None):
-    if cuisine != None:
-        d = cuisine
-    d.cuisine.core.dir_remove("$goDir/src/*", force=True)
-    d.cuisine.core.dir_remove("$tmpDir/*", force=True)
-    d.cuisine.core.dir_remove("$varDir/data/*", force=True)
-    d.cuisine.core.dir_remove('/opt/code/github/domsj', True)
-    d.cuisine.core.dir_remove('/opt/code/github/openvstorage', True)
-
-    d.cuisine.installerdevelop.cleanup()
-    C = """
-    cd /opt;find . -name '*.pyc' -delete
-    cd /opt;find . -name '*.log' -delete
-    cd /opt;find . -name '__pycache__' -delete
-    """
-    d.cuisine.core.run_script(C)
-
-    if aggressive:
-        C = """
-        set -ex
-        cd /
-        find -regex '.*__pycache__.*' -delete
-        rm -rf /var/log
-        mkdir -p /var/log/apt
-        rm -rf /var/tmp
-        mkdir -p /var/tmp
-        rm -rf /usr/share/doc
-        mkdir -p /usr/share/doc
-        rm -rf /usr/share/gcc-5
-        rm -rf /usr/share/gdb
-        rm -rf /usr/share/gitweb
-        rm -rf /usr/share/info
-        rm -rf /usr/share/lintian
-        rm -rf /usr/share/perl
-        rm -rf /usr/share/perl5
-        rm -rf /usr/share/pyshared
-        rm -rf /usr/share/python*
-        rm -rf /usr/share/zsh
-
-        rm -rf /usr/share/locale-langpack/en_AU
-        rm -rf /usr/share/locale-langpack/en_CA
-        rm -rf /usr/share/locale-langpack/en_GB
-        rm -rf /usr/share/man
-
-        rm -rf /usr/lib/python*
-        rm -rf /usr/lib/valgrind
-
-        rm -rf /usr/bin/python*
-        """
-        d.cuisine.core.run_script(C)
-
-
 def jumpscale(push=True):
     d = j.sal.docker.create(name='build',
                             stdout=True,
@@ -100,7 +48,7 @@ def jumpscale(push=True):
                             setrootrndpasswd=False)
 
     d.cuisine.installerdevelop.jumpscale8()
-    cleanup(cuisine=d)
+    d.cuisine.installerdevelop.cleanup()
     d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True, push=True)
 
 
@@ -116,7 +64,7 @@ def golang(push=True):
                             setrootrndpasswd=False)
 
     d.cuisine.golang.install()
-    cleanup(cuisine=d)
+    d.cuisine.installerdevelop.cleanup()
     d.commit("jumpscale/ubuntu1604_golang", delete=True, force=True, push=True)
 
 
@@ -137,7 +85,7 @@ def stats(push=True):
 
     d.cuisine.apps.grafana.build(start=False)
 
-    cleanup(cuisine=d)
+    d.cuisine.installerdevelop.cleanup()
     d.commit("jumpscale/ubuntu1604_stats", delete=True, force=True, push=push)
 
 
@@ -154,7 +102,7 @@ def portal(push=True):
 
     d.cuisine.apps.portal.install(start=False)
 
-    cleanup(cuisine=d)
+    d.cuisine.installerdevelop.cleanup()
     d.commit("jumpscale/ubuntu1604_portal", delete=True, force=True, push=push)
 
 
@@ -181,7 +129,7 @@ def all(push=True):
     d.cuisine.apps.fs.build(start=False)
     d.cuisine.apps.stor.build(start=False)
 
-    cleanup(cuisine=d)
+    d.cuisine.installerdevelop.cleanup()
     d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push)
 
 
@@ -198,7 +146,7 @@ def cockpit(push=True):
 
     d.cuisine.apps.cockpit.build(start=False)
 
-    cleanup(cuisine=d)
+    d.cuisine.installerdevelop.cleanup()
     d.commit("jumpscale/ubuntu1604_cockpit", delete=True, force=True, push=push)
 
 
@@ -216,7 +164,7 @@ def ovs(push=True):
     d.cuisine.apps.alba.build(start=False)
     d.cuisine.apps.volumedriver.build(start=False)
 
-    cleanup(cuisine=d)
+    d.cuisine.installerdevelop.cleanup()
     d.commit("jumpscale/ubuntu1604_ovs", delete=True, force=True, push=push)
 
 
@@ -304,7 +252,7 @@ def build_docker_fromsandbox(push):
         d.cuisine.core.file_write("/root/.profile", prof)
 
     # clean stuff we don't need
-    cleanup(aggressive=False, cuisine=d)
+    d.cuisine.installerdevelop.cleanup()
 
     d.commit("jumpscale/ubuntu1604_sandbox", delete=True, force=True, push=push)
     print("sandbox docker committed")
@@ -408,7 +356,7 @@ def js8fs():
     d.cuisine.core.file_write('/optvar/cfg/fs/config.toml', config)
     d.cuisine.core.file_copy('/builder/md/js8_opt.flist', '/optvar/cfg/fs/js8_opt.flist')
 
-    cleanup(aggressive=False, cuisine=d)
+    d.cuisine.installerdevelop.cleanup()
 
     # pm = d.cuisine.processmanager.get(pm="tmux")
     # pm.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
