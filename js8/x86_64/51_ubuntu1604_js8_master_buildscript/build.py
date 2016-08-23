@@ -52,7 +52,7 @@ def jumpscale(push=True):
 
     d.cuisine.development.js8.install(deps=False)
     d.cuisine.tools.sandbox.cleanup()
-    d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True, push=True)
+    d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True, push=push)
 
 
 def golang(push=True):
@@ -68,7 +68,7 @@ def golang(push=True):
 
     d.cuisine.development.golang.install()
     d.cuisine.tools.sandbox.cleanup()
-    d.commit("jumpscale/ubuntu1604_golang", delete=True, force=True, push=True)
+    d.commit("jumpscale/ubuntu1604_golang", delete=True, force=True, push=push)
 
 
 def stats(push=True):
@@ -393,15 +393,15 @@ def js8fs():
 def enableWeave():
     j.sal.docker.weaveInstall(ufw=True)
 
-push = False
-# base()
-# jumpscale()
-# golang()
-# stats()
-# portal()
-# all()
-# cockpit()
-ovs()
+push = True
+base(push=push)
+jumpscale(push=push)
+golang(push=push)
+stats(push=push)
+portal(push=push)
+all(push=push)
+cockpit(push=push)
+ovs(push=push)
 sandbox(push=push)
 
 # will create a docker where all sandboxed files are in, can be used without the js8_fs
