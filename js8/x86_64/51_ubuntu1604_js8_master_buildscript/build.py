@@ -25,6 +25,7 @@ def base(push=True):
                             sharecode=False,
                             setrootrndpasswd=False)
 
+
     # makes sure we build redis in stead of using from system which is default behaviour
     d.cuisine.apps.redis.build()
 
@@ -34,7 +35,7 @@ def base(push=True):
     # call cuisine method
     shellinabox(d)
 
-    d.cuisine.tools.sandbox.cleanup()()
+    d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_base", delete=True, force=True, push=push)
 
 
@@ -50,7 +51,7 @@ def jumpscale(push=True):
                             setrootrndpasswd=False)
 
     d.cuisine.development.js8.install(deps=False)
-    d.cuisine.tools.sandbox.cleanup()()
+    d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True, push=True)
 
 
@@ -66,7 +67,7 @@ def golang(push=True):
                             setrootrndpasswd=False)
 
     d.cuisine.development.golang.install()
-    d.cuisine.tools.sandbox.cleanup()()
+    d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_golang", delete=True, force=True, push=True)
 
 
@@ -87,7 +88,7 @@ def stats(push=True):
 
     d.cuisine.apps.grafana.build(start=False)
 
-    d.cuisine.tools.sandbox.cleanup()()
+    d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_stats", delete=True, force=True, push=push)
 
 
@@ -121,17 +122,17 @@ def all(push=True):
 
     d.cuisine.apps.caddy.install(start=False)
 
-    d.cuisine.geodns.install()
+    d.cuisine.apps.geodns.install()
 
-    d.cuisine.lua.install_lua_tarantool()
+    d.cuisine.development.lua.installLuaTarantool()
 
     d.cuisine.apps.controller.build(start=False)
-    d.cuisine.apps.core.build(start=False)
+    d.cuisine.systemservices.g8oscore.build(start=False)
 
-    d.cuisine.apps.fs.build(start=False)
-    d.cuisine.apps.stor.build(start=False)
+    d.cuisine.systemservices.g8osfs.build(start=False)
+    d.cuisine.systemservices.aydostor.build(start=False)
 
-    d.cuisine.tools.sandbox.cleanup()()
+    d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push)
 
 
@@ -146,9 +147,9 @@ def cockpit(push=True):
                             sharecode=False,
                             setrootrndpasswd=False)
 
-    d.cuisine.apps.cockpit.build(start=False)
+    d.cuisine.solutions.cockpit.install(start=False)
 
-    d.cuisine.tools.sandbox.cleanup()()
+    d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_cockpit", delete=True, force=True, push=push)
 
 
@@ -166,7 +167,7 @@ def ovs(push=True):
     d.cuisine.apps.alba.build(start=False)
     d.cuisine.apps.volumedriver.build(start=False)
 
-    d.cuisine.tools.sandbox.cleanup()()
+    d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_ovs", delete=True, force=True, push=push)
 
 
@@ -254,7 +255,7 @@ def build_docker_fromsandbox(push):
         d.cuisine.core.file_write("/root/.profile", prof)
 
     # clean stuff we don't need
-    d.cuisine.tools.sandbox.cleanup()()
+    d.cuisine.tools.sandbox.cleanup()
 
     d.commit("jumpscale/ubuntu1604_sandbox", delete=True, force=True, push=push)
     print("sandbox docker committed")
@@ -358,7 +359,7 @@ def js8fs():
     d.cuisine.core.file_write('/optvar/cfg/fs/config.toml', config)
     d.cuisine.core.file_copy('/builder/md/js8_opt.flist', '/optvar/cfg/fs/js8_opt.flist')
 
-    d.cuisine.tools.sandbox.cleanup()()
+    d.cuisine.tools.sandbox.cleanup()
 
     # pm = d.cuisine.processmanager.get(pm="tmux")
     # pm.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
@@ -392,15 +393,15 @@ def js8fs():
 def enableWeave():
     j.sal.docker.weaveInstall(ufw=True)
 
-base()
-jumpscale()
-golang()
-stats()
+push = False
+# base()
+# jumpscale()
+# golang()
+# stats()
 # portal()
-all()
+# all()
 # cockpit()
-# ovs()
-
+ovs()
 sandbox(push=push)
 
 # will create a docker where all sandboxed files are in, can be used without the js8_fs

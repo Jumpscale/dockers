@@ -23,7 +23,7 @@ d = j.sal.docker.create(name='build',
 #should not be needed but does not work for now
 j.actions.resetAll()
 
-d.cuisine.installerdevelop.jumpscale8()
+d.cuisine.development.js8.install(deps=False)
 
 
 
