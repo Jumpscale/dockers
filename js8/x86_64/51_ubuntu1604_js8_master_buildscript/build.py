@@ -27,7 +27,7 @@ def base(push=True):
 
 
     # makes sure we build redis in stead of using from system which is default behaviour
-    d.cuisine.apps.redis.build()
+    d.cuisine.apps.redis.install()
 
     # install base, python, pip3, ...
     d.cuisine.development.js8.installDeps()
@@ -86,7 +86,7 @@ def stats(push=True):
 
     d.cuisine.apps.influxdb.install()
 
-    d.cuisine.apps.grafana.build(start=False)
+    d.cuisine.apps.grafana.build()
 
     d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_stats", delete=True, force=True, push=push)
@@ -112,7 +112,7 @@ def portal(push=True):
 def all(push=True):
     d = j.sal.docker.create(name='build',
                             stdout=True,
-                            base="jumpscale/ubuntu1604_stats",
+                            base="jumpscale/ubuntu1604_portal",
                             nameserver=['8.8.8.8'],
                             replace=True,
                             myinit=True,
@@ -176,7 +176,7 @@ def sandbox(push):
     # create new docker to do the sandboxing in, needs to start from the development sandbox
     d = j.sal.docker.create(name='sandboxer',
                             stdout=True,
-                            base='jumpscale/ubuntu1604_js_development',
+                            base='jumpscale/ubuntu1604_all',
                             nameserver=['8.8.8.8'],
                             replace=True,
                             myinit=True,
@@ -212,9 +212,9 @@ def sandbox(push):
     rsync -rv /usr/share/tarantool/ /opt/jumpscale8/lib/lua/tarantool/
 
     """
-    d.cuisine.core.run_script(s)
+    d.cuisine.core.execute_bash(s)
 
-    d.cuisine.sandbox.do("/out")
+    d.cuisine.tools.sandbox.do("/out")
     # remove docker
     d.destroy()
 
@@ -245,7 +245,7 @@ def build_docker_fromsandbox(push):
     source env.sh
     js 'j.tools.console.echo("SUCCEEDED")'
     """
-    d.cuisine.core.run_script(s)
+    d.cuisine.core.execute_bash(s)
 
     add = 'source /opt/jumpscale8/env.sh'
     prof = d.cuisine.core.file_read("/root/.profile")
@@ -387,7 +387,7 @@ def js8fs():
         source env.sh
         js 'j.tools.console.echo("SUCCEEDED")'
         """
-    d.cuisine.core.run_script(s)
+    d.cuisine.core.execute_bash(s)
 
 
 def enableWeave():
@@ -401,13 +401,13 @@ stats(push=push)
 portal(push=push)
 all(push=push)
 cockpit(push=push)
-ovs(push=push)
+#ovs(push=push)
 sandbox(push=push)
 
 # will create a docker where all sandboxed files are in, can be used without the js8_fs
 build_docker_fromsandbox(push=push)
 
 # host a docker which becomes the host for our G8OS FS
-# storhost()
+storhost()
 # now connect to our G8OS STOR
-# js8fs()
+js8fs()
