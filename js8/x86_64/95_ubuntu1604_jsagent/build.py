@@ -22,6 +22,10 @@ repos = ['https://github.com/Jumpscale/jumpscale_core8.git']
 for url in repos:
     d.cuisine.development.git.pullRepo(url, ssh=False)
 
+d.cuisine.package.mdupdate()
+d.cuisine.package.install('nmap')
+d.cuisine.development.pip.install('uvloop')
+
 d.cuisine.apps.jsagent.install(reset=True, start=False)
 
 d.cuisine.core.dir_remove("$tmpDir/*")
