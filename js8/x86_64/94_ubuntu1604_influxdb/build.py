@@ -21,6 +21,5 @@ j.actions.resetAll()
 d.cuisine.apps.influxdb.install(reset=True, start=True)
 
 d.cuisine.core.dir_remove("$tmpDir/*")
-d.cuisine.core.dir_remove("$varDir/data/*")
 
 d.commit("jumpscale/%s" % name, delete=True, force=True)
