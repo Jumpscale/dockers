@@ -22,11 +22,14 @@ d = j.sal.docker.create(name='build',
                         sharecode=False,
                         setrootrndpasswd=False)
 
+d.cuisine.apps.redis.build()
 
-d.cuisine.installer.base()
-d.cuisine.installerdevelop.python()
-d.cuisine.installerdevelop.pip()
-d.cuisine.installerdevelop.installJS8Deps()
+# install base, python, pip3, ...
+d.cuisine.development.js8.installDeps()
+
+# call cuisine method
+shellinabox(d)
+
 
 # make sure brotli is installed
 if not d.cuisine.core.command_check('bro'):
@@ -39,7 +42,8 @@ if not d.cuisine.core.command_check('bro'):
     """
     d.cuisine.core.execute_bash(bro_script)
 
-d.cuisine.installerdevelop.cleanup()
+
+d.cuisine.tools.sandbox.cleanup()
 
 
 d.commit("jumpscale/%s" % name, delete=True, force=True)
