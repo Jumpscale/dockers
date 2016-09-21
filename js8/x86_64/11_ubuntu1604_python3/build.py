@@ -37,7 +37,7 @@ if not d.cuisine.core.command_check('bro'):
     make bro
     cp bin/bro $binDir/bro
     """
-    d.cuisine.core.run_script(bro_script)
+    d.cuisine.core.execute_bash(bro_script)
 
 d.cuisine.installerdevelop.cleanup()
 

@@ -110,7 +110,7 @@ cd /opt/jumpscale8
 source env.sh
 js 'j.tools.console.echo("SUCCEEDED")'
 """
-d.cuisine.core.run_script(s)
+d.cuisine.core.execute_bash(s)
 
 s="""
 find -regex '.*__pycache__.*' -delete
@@ -119,7 +119,7 @@ mkdir -p /var/log/apt
 rm -rf /var/tmp
 mkdir -p /var/tmp
 """
-d.cuisine.core.run_script(s)
+d.cuisine.core.execute_bash(s)
 
 
 add='source /opt/jumpscale8/env.sh'

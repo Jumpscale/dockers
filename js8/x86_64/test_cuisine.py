@@ -15,7 +15,7 @@ S="""
 ls /
 echo "done"
 """
-print(c.core.run_script(S))
+print(c.core.execute_bash(S))
 
 
 

@@ -39,6 +39,6 @@ j.do.copyTree("/optvar/","/build/optvar/")
 j.do.delete("/build/opt/jumpscale8/bin/metadata.db")
 """
 
-d.cuisine.core.run_script(PREPARE)
+d.cuisine.core.execute_bash(PREPARE)
 d.cuisine.execute_jumpscript(SANDBOX)
 d.cuisine.execute_jumpscript(COPY)

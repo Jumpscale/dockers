@@ -211,7 +211,7 @@ def sandbox(push):
     rsync -rv /usr/share/tarantool/ /opt/jumpscale8/lib/lua/tarantool/
 
     """
-    d.cuisine.core.run_script(s)
+    d.cuisine.core.execute_bash(s)
 
     d.cuisine.sandbox.do("/out")
     # remove docker
@@ -244,7 +244,7 @@ def build_docker_fromsandbox(push):
     source env.sh
     js 'j.tools.console.echo("SUCCEEDED")'
     """
-    d.cuisine.core.run_script(s)
+    d.cuisine.core.execute_bash(s)
 
     add = 'source /opt/jumpscale8/env.sh'
     prof = d.cuisine.core.file_read("/root/.profile")
@@ -386,7 +386,7 @@ def js8fs():
         source env.sh
         js 'j.tools.console.echo("SUCCEEDED")'
         """
-    d.cuisine.core.run_script(s)
+    d.cuisine.core.execute_bash(s)
 
 
 def enableWeave():
