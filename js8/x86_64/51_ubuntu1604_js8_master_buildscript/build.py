@@ -4,6 +4,15 @@ from JumpScale import j
 j.data.cache.reset()  # make sure cache is gone
 
 
+def resetAll():
+    # DANGEROUS WILL CLEAN ALL LOCAL BTRFS VOLUMES
+    j.sal.btrfs.subvolumesDelete("/storage/builder", filterExclude="/docker")
+    j.sal.docker.destroyAll()
+    j.sal.docker.removeImages()
+
+
+# resetAll()
+
 def base(push=True):
 
     # move to app in cuisine under apps and call from here
@@ -13,7 +22,7 @@ def base(push=True):
         d.cuisine.core.file_copy(bin_path, "$binDir")
 
     j.sal.btrfs.subvolumeCreate("/storage/builder")
-    j.sal.btrfs.subvolumeCreate("/storage/builder/sandbox_ub1604")
+    # j.sal.btrfs.subvolumeCreate("/storage/builder/sandbox_ub1604")
 
     d = j.sal.docker.create(name='build',
                             stdout=True,
@@ -24,7 +33,6 @@ def base(push=True):
                             ssh=True,
                             sharecode=False,
                             setrootrndpasswd=False)
-
 
     # makes sure we build redis in stead of using from system which is default behaviour
     d.cuisine.apps.redis.install()
@@ -393,15 +401,32 @@ def js8fs():
 def enableWeave():
     j.sal.docker.weaveInstall(ufw=True)
 
+# resetAll()
+
 push = True
+
 base(push=push)
+print("BASE DONE")
+
+# to see how fat we got
+from pudb import set_trace
+set_trace()
+
 jumpscale(push=push)
+
+from pudb import set_trace
+set_trace()
+
 golang(push=push)
+
+from pudb import set_trace
+set_trace()
+
 stats(push=push)
 portal(push=push)
 all(push=push)
 cockpit(push=push)
-#ovs(push=push)
+# ovs(push=push)
 sandbox(push=push)
 
 # will create a docker where all sandboxed files are in, can be used without the js8_fs
