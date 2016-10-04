@@ -189,8 +189,11 @@ def scalityS3(push=True):
                             ssh=True,
                             sharecode=False,
                             setrootrndpasswd=False)
-
+    d.cuisine.apps.nodejs.install()
     d.cuisine.apps.s3server.install(start=False)
+
+    d.cuisine.core.dir_ensure('data/data')
+    d.cuisine.core.dir_ensure('data/meta')
 
     env = {
         'S3DATAPATH': '/data/data',
@@ -203,13 +206,13 @@ def scalityS3(push=True):
         env=env,
         path='/opt/code/github/scality/S3'
     )
-    
+
     conf = {
         'volume': '/data',
         'expose': '8000',
     }
 
-    d.commit("jumpscale/scalityS3", delete=True, force=True, push=push, conf=conf)
+    d.commit("jumpscale/scalitys3", delete=True, force=True, push=push, conf=conf)
 
 
 def sandbox(push):
@@ -440,23 +443,11 @@ push = True
 
 base(push=push)
 print("BASE DONE")
-
-# to see how fat we got
-from pudb import set_trace
-set_trace()
-
 jumpscale(push=push)
-
-from pudb import set_trace
-set_trace()
-
 golang(push=push)
-
-from pudb import set_trace
-set_trace()
-
 stats(push=push)
 portal(push=push)
+scalityS3(push=push)
 all(push=push)
 cockpit(push=push)
 # ovs(push=push)
