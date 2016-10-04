@@ -179,6 +179,39 @@ def ovs(push=True):
     d.commit("jumpscale/ubuntu1604_ovs", delete=True, force=True, push=push)
 
 
+def scalityS3(push=True):
+    d = j.sal.docker.create(name='build_scalityS3',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_base",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False)
+
+    d.cuisine.apps.s3server.install(start=False)
+
+    env = {
+        'S3DATAPATH': '/data/data',
+        'S3METADATAPATH': '/data/meta',
+    }
+
+    d.cuisine.processmanager.ensure(
+        name='scalityS3',
+        cmd='npm start',
+        env=env,
+        path='/opt/code/github/scality/S3'
+    )
+    
+    conf = {
+        'volume': '/data',
+        'expose': '8000',
+    }
+
+    d.commit("jumpscale/scalityS3", delete=True, force=True, push=push, conf=conf)
+
+
 def sandbox(push):
 
     # create new docker to do the sandboxing in, needs to start from the development sandbox
