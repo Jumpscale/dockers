@@ -63,6 +63,34 @@ def jumpscale(push=True):
     d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True, push=push)
 
 
+def mariadb(push=True):
+    d = j.sal.docker.create(name='build',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_base",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False
+                            )
+
+    d.cuisine.apps.mariadb.install()
+
+    cmd = "/usr/sbin/mysqld --basedir=/usr --datadir=/data/db \
+--plugin-dir=/usr/lib/mysql/plugin --log-error=/dev/log/mysql/error.log \
+--pid-file=/var/run/mysqld/mysqld.pid --socket=/var/run/mysqld/mysqld.sock --port=3306"
+
+    d.cuisine.processmanager.ensure('mariadb', cmd)
+
+    conf = {
+        'volume': '/data/db',
+        'expose': '3306',
+    }
+
+    d.commit("jumpscale/ubuntu1604_mariadb", delete=True, force=True, push=push, conf=conf)
+
+
 def golang(push=True):
     d = j.sal.docker.create(name='build',
                             stdout=True,
@@ -460,3 +488,4 @@ build_docker_fromsandbox(push=push)
 storhost()
 # now connect to our G8OS STOR
 js8fs()
+mariadb()
