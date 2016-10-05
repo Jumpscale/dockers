@@ -160,6 +160,9 @@ def all(push=True):
 
     d.cuisine.apps.geodns.install()
 
+    d.cuisine.apps.brotli.build()
+    d.cuisine.apps.brotli.install()
+
     d.cuisine.development.lua.installLuaTarantool()
 
     d.cuisine.apps.controller.build(start=False)
@@ -470,22 +473,44 @@ def enableWeave():
 push = True
 
 base(push=push)
-print("BASE DONE")
+print("******BASE DONE******")
+
 jumpscale(push=push)
+print("******JUMPSCALE DONE******")
+
 golang(push=push)
+print("******GOLANG DONE******")
+
 stats(push=push)
+print("******STATS DONE******")
+
 portal(push=push)
+print("******PORTAL DONE******")
+
 scalityS3(push=push)
+print("******SCALITYS3 DONE******")
+
 all(push=push)
+print("******ALL DONE******")
+
 cockpit(push=push)
+print("******COCKPIT DONE******")
+
 # ovs(push=push)
 sandbox(push=push)
+print("******SANDBOX DONE******")
 
 # will create a docker where all sandboxed files are in, can be used without the js8_fs
+
 build_docker_fromsandbox(push=push)
+print("******BUILD DOCKER FROM SANDBOX DONE******")
 
 # host a docker which becomes the host for our G8OS FS
 storhost()
+print("******STORHOST DONE******")
+
 # now connect to our G8OS STOR
 js8fs()
+print("******JS8FS DONE******")
+
 mariadb()
