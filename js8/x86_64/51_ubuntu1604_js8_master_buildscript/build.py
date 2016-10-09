@@ -100,6 +100,23 @@ def stats(push=True):
     d.commit("jumpscale/ubuntu1604_stats", delete=True, force=True, push=push)
 
 
+def tidb(push=True):
+    d = j.sal.docker.create(name='build',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_all",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False)
+
+    d.cuisine.development.rust.install()
+    d.cuisine.apps.tidb.build(install=True)
+    d.cuisine.tools.sandbox.cleanup()
+    d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push)
+
+
 def portal(push=True):
     d = j.sal.docker.create(name='build',
                             stdout=True,
@@ -202,7 +219,7 @@ def scalityS3(push=True):
 
     d.cuisine.processmanager.ensure(
         name='scalityS3',
-        cmd='npm start',
+        cmd='npm start_location',
         env=env,
         path='/opt/code/github/scality/S3'
     )
@@ -449,6 +466,7 @@ stats(push=push)
 portal(push=push)
 scalityS3(push=push)
 all(push=push)
+tidb(push=push)
 cockpit(push=push)
 # ovs(push=push)
 sandbox(push=push)
