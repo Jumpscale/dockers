@@ -237,22 +237,17 @@ def scalityS3(push=True):
                             ssh=True,
                             sharecode=False,
                             setrootrndpasswd=False)
-    d.cuisine.apps.nodejs.install()
+
+    d.cuisine.core.dir_ensure('/data/data')
+    d.cuisine.core.dir_ensure('/data/meta')
+
+    d.cuisine.apps.nodejs.install(storageLocation="/data/data", metaLocation="/data/meta/")
     d.cuisine.apps.s3server.install(start=False)
-
-    d.cuisine.core.dir_ensure('data/data')
-    d.cuisine.core.dir_ensure('data/meta')
-
-    env = {
-        'S3DATAPATH': '/data/data',
-        'S3METADATAPATH': '/data/meta',
-    }
 
     d.cuisine.processmanager.ensure(
         name='scalityS3',
-        cmd='npm start_location',
-        env=env,
-        path='/opt/code/github/scality/S3'
+        cmd='npm run start_location',
+        path='/opt/jumpscale8/apps/S3'
     )
 
     conf = {
