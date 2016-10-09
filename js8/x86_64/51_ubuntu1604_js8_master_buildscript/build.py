@@ -63,6 +63,34 @@ def jumpscale(push=True):
     d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True, push=push)
 
 
+def mariadb(push=True):
+    d = j.sal.docker.create(name='build',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_base",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False
+                            )
+
+    d.cuisine.apps.mariadb.install()
+
+    cmd = "/usr/sbin/mysqld --basedir=/usr --datadir=/data/db \
+--plugin-dir=/usr/lib/mysql/plugin --log-error=/dev/log/mysql/error.log \
+--pid-file=/var/run/mysqld/mysqld.pid --socket=/var/run/mysqld/mysqld.sock --port=3306"
+
+    d.cuisine.processmanager.ensure('mariadb', cmd)
+
+    conf = {
+        'volume': '/data/db',
+        'expose': '3306',
+    }
+
+    d.commit("jumpscale/ubuntu1604_mariadb", delete=True, force=True, push=push, conf=conf)
+
+
 def golang(push=True):
     d = j.sal.docker.create(name='build',
                             stdout=True,
@@ -148,6 +176,9 @@ def all(push=True):
     d.cuisine.apps.caddy.install(start=False)
 
     d.cuisine.apps.geodns.install()
+
+    d.cuisine.apps.brotli.build()
+    d.cuisine.apps.brotli.install()
 
     d.cuisine.development.lua.installLuaTarantool()
 
@@ -459,22 +490,45 @@ def enableWeave():
 push = True
 
 base(push=push)
-print("BASE DONE")
+print("******BASE DONE******")
+
 jumpscale(push=push)
+print("******JUMPSCALE DONE******")
+
 golang(push=push)
+print("******GOLANG DONE******")
+
 stats(push=push)
+print("******STATS DONE******")
+
 portal(push=push)
+print("******PORTAL DONE******")
+
 scalityS3(push=push)
+print("******SCALITYS3 DONE******")
+
 all(push=push)
+print("******ALL DONE******")
+
 tidb(push=push)
+print("******TIDB DONE******")
+
 cockpit(push=push)
+print("******COCKPIT DONE******")
+
 # ovs(push=push)
 sandbox(push=push)
+print("******SANDBOX DONE******")
 
 # will create a docker where all sandboxed files are in, can be used without the js8_fs
+
 build_docker_fromsandbox(push=push)
+print("******BUILD DOCKER FROM SANDBOX DONE******")
 
 # host a docker which becomes the host for our G8OS FS
 storhost()
+print("******STORHOST DONE******")
+
 # now connect to our G8OS STOR
 js8fs()
+print("******JS8FS DONE******")
