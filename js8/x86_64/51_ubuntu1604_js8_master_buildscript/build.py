@@ -241,8 +241,8 @@ def scalityS3(push=True):
     d.cuisine.core.dir_ensure('/data/data')
     d.cuisine.core.dir_ensure('/data/meta')
 
-    d.cuisine.apps.nodejs.install(storageLocation="/data/data", metaLocation="/data/meta/")
-    d.cuisine.apps.s3server.install(start=False)
+    d.cuisine.apps.nodejs.install()
+    d.cuisine.apps.s3server.install(storageLocation="/data/data", metaLocation="/data/meta/", start=False)
 
     d.cuisine.processmanager.ensure(
         name='scalityS3',
