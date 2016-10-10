@@ -144,6 +144,23 @@ def tidb(push=True):
     d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push)
 
+def owncloud(push=True):
+    d = j.sal.docker.create(name='jumpscale/ubuntu1604_owncloud',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_all",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False)
+
+    d.cuisine.apps.nginx.build()
+    d.cuisine.apps.php.build()
+    d.cuisine.apps.php.install()
+    d.cuisine.apps.owncloud.install(start=False)
+
+    d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push)
 
 def portal(push=True):
     d = j.sal.docker.create(name='build',
@@ -225,6 +242,7 @@ def ovs(push=True):
 
     d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_ovs", delete=True, force=True, push=push)
+
 
 
 def scalityS3(push=True):
@@ -507,6 +525,9 @@ print("******ALL DONE******")
 
 tidb(push=push)
 print("******TIDB DONE******")
+
+owncloud(push=push)
+print("******OWNCLOUD DONE******")
 
 cockpit(push=push)
 print("******COCKPIT DONE******")
