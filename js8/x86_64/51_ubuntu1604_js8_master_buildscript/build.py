@@ -21,7 +21,7 @@ def base(push=True):
         bin_path = d.cuisine.bash.cmdGetPath('shellinaboxd')
         d.cuisine.core.file_copy(bin_path, "$binDir")
 
-    j.sal.btrfs.subvolumeCreate("/storage/builder")
+    j.sal.btrfs.subvolumeCreate("/storage/jstor")
     # j.sal.btrfs.subvolumeCreate("/storage/builder/sandbox_ub1604")
 
     d = j.sal.docker.create(name='build',
@@ -44,7 +44,8 @@ def base(push=True):
     shellinabox(d)
 
     d.cuisine.tools.sandbox.cleanup()
-    d.commit("jumpscale/ubuntu1604_base", delete=True, force=True, push=push)
+    d.commit("jumpscale/ubuntu1604_base", delete=True, force=True,
+             push=push)
 
 
 def jumpscale(push=True):
@@ -60,7 +61,8 @@ def jumpscale(push=True):
 
     d.cuisine.development.js8.install(deps=False)
     d.cuisine.tools.sandbox.cleanup()
-    d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True, push=push)
+    d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True,
+             push=push)
 
 
 def mariadb(push=True):
@@ -88,7 +90,8 @@ def mariadb(push=True):
         'expose': '3306',
     }
 
-    d.commit("jumpscale/ubuntu1604_mariadb", delete=True, force=True, push=push, conf=conf)
+    d.commit("jumpscale/ubuntu1604_mariadb", delete=True, force=True,
+             push=push, conf=conf)
 
 
 def golang(push=True):
@@ -104,7 +107,8 @@ def golang(push=True):
 
     d.cuisine.development.golang.install()
     d.cuisine.tools.sandbox.cleanup()
-    d.commit("jumpscale/ubuntu1604_golang", delete=True, force=True, push=push)
+    d.commit("jumpscale/ubuntu1604_golang", delete=True, force=True,
+             push=push)
 
 
 def stats(push=True):
@@ -125,7 +129,8 @@ def stats(push=True):
     d.cuisine.apps.grafana.build()
 
     d.cuisine.tools.sandbox.cleanup()
-    d.commit("jumpscale/ubuntu1604_stats", delete=True, force=True, push=push)
+    d.commit("jumpscale/ubuntu1604_stats", delete=True, force=True,
+             push=push)
 
 
 def tidb(push=True):
@@ -142,7 +147,28 @@ def tidb(push=True):
     d.cuisine.development.rust.install()
     d.cuisine.apps.tidb.build(install=True)
     d.cuisine.tools.sandbox.cleanup()
-    d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push)
+    d.commit("jumpscale/ubuntu1604_all", delete=True, force=True,
+             push=push)
+
+
+def owncloud(push=True):
+    d = j.sal.docker.create(name='owncloud',
+                            stdout=True,
+                            base="jumpscale/ubuntu1604_all",
+                            nameserver=['8.8.8.8'],
+                            replace=True,
+                            myinit=True,
+                            ssh=True,
+                            sharecode=False,
+                            setrootrndpasswd=False)
+
+    d.cuisine.apps.nginx.build()
+    d.cuisine.development.php.build()
+    d.cuisine.development.php.install()
+    d.cuisine.apps.owncloud.install(start=False)
+
+    d.commit("jumpscale/ubuntu1604_all", delete=True, force=True,
+             push=push)
 
 
 def portal(push=True):
@@ -159,7 +185,8 @@ def portal(push=True):
     d.cuisine.apps.portal.install(start=False)
 
     d.cuisine.tools.sandbox.cleanup()
-    d.commit("jumpscale/ubuntu1604_portal", delete=True, force=True, push=push)
+    d.commit("jumpscale/ubuntu1604_portal", delete=True, force=True,
+             push=push)
 
 
 def all(push=True):
@@ -189,7 +216,8 @@ def all(push=True):
     d.cuisine.systemservices.aydostor.build(start=False)
 
     d.cuisine.tools.sandbox.cleanup()
-    d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push)
+    d.commit("jumpscale/ubuntu1604_all", delete=True, force=True,
+             push=push)
 
 
 def cockpit(push=True):
@@ -206,7 +234,8 @@ def cockpit(push=True):
     d.cuisine.solutions.cockpit.install(start=False)
 
     d.cuisine.tools.sandbox.cleanup()
-    d.commit("jumpscale/ubuntu1604_cockpit", delete=True, force=True, push=push)
+    d.commit("jumpscale/ubuntu1604_cockpit", delete=True, force=True,
+             push=push)
 
 
 def ovs(push=True):
@@ -224,7 +253,8 @@ def ovs(push=True):
     d.cuisine.apps.volumedriver.build(start=False)
 
     d.cuisine.tools.sandbox.cleanup()
-    d.commit("jumpscale/ubuntu1604_ovs", delete=True, force=True, push=push)
+    d.commit("jumpscale/ubuntu1604_ovs", delete=True, force=True,
+             push=push)
 
 
 def scalityS3(push=True):
@@ -255,7 +285,8 @@ def scalityS3(push=True):
         'expose': '8000',
     }
 
-    d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push, conf=conf)
+    d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push,
+             conf=conf)
 
 
 def sandbox(push):
@@ -270,7 +301,7 @@ def sandbox(push):
                             ssh=True,
                             sharecode=False,
                             setrootrndpasswd=False, weavenet=False,
-                            vols="/out:/storage/builder/sandbox_ub1604")
+                            vols="/storage/jstor:/storage/jstor/")
 
     # copy tools & update
     s = """
@@ -301,7 +332,8 @@ def sandbox(push):
     """
     d.cuisine.core.execute_bash(s)
 
-    d.cuisine.tools.sandbox.do("/out")
+    sp = d.cuisine.tools.stor.getStorageSpace('sandbox_ub1604')
+    sp.upload('opt', source='/opt')
     # remove docker
     d.destroy()
 
@@ -320,11 +352,11 @@ def build_docker_fromsandbox(push):
                             ssh=True,
                             sharecode=False,
                             setrootrndpasswd=False,
-                            vols="/out:/storage/builder/sandbox_ub1604")
+                            vols="/storage/jstor:/storage/jstor/")
 
     print("create sandbox")
 
-    d.executor.sshclient.rsync_up("/storage/builder/sandbox_ub1604/js8/jumpscale8/", "/opt/jumpscale8/")
+    # d.executor.sshclient.rsync_up("/storage/jstor/", "/opt/jumpscale8/")
 
     s = """
     set -ex
@@ -342,14 +374,15 @@ def build_docker_fromsandbox(push):
         d.cuisine.core.file_write("/root/.profile", prof)
 
     # clean stuff we don't need
-    d.cuisine.tools.sandbox.cleanup()
+    # d.cuisine.tools.sandbox.cleanup()
 
-    d.commit("jumpscale/ubuntu1604_sandbox", delete=True, force=True, push=push)
+    d.commit("jumpscale/ubuntu1604_sandbox", delete=True, force=True,
+             push=push)
     print("sandbox docker committed")
 
 
 def storhost():
-    namespace = 'js8_opt'
+    namespace = 'opt'
 
     d = j.sal.docker.create(name='g8stor',
                             stdout=True,
@@ -361,7 +394,7 @@ def storhost():
                             ports="22:7022 8090:8090",
                             sharecode=False,
                             setrootrndpasswd=False, weavenet=True,
-                            vols="/mnt/aydostorx/namespaces/{namespace}:/storage/builder/sandbox_ub1604/js8/files".format(namespace=namespace))
+                            vols="/mnt/aydostorx/namespaces/{namespace}:/storage/jstor/files".format(namespace=namespace))
 
     CONFIG = """
     listen_addr = "0.0.0.0:8090"
@@ -394,7 +427,7 @@ def storhost():
                             privileged=True,
                             setrootrndpasswd=False,
                             weavenet=True,
-                            vols="/mnt/aydostorx/namespaces/{namespace}:/storage/builder/sandbox_ub1604/js8/files".format(namespace=namespace))
+                            vols="/mnt/aydostorx/namespaces/{namespace}:/storage/jstor/files".format(namespace=namespace))
 
     if not j.sal.nettools.tcpPortConnectionTest("localhost", 8090):
         raise RuntimeError("cannot connect over tcp to port 8090 on localhost after launching g8stor in docker.")
@@ -414,7 +447,7 @@ def js8fs():
                             privileged=True,
                             setrootrndpasswd=False,
                             weavenet=True,
-                            vols="/builder:/storage/builder/sandbox_ub1604/js8")
+                            vols="/storage/jstor/:/storage/jstor/")
 
     config = '''\
     [[mount]]
@@ -507,6 +540,9 @@ print("******SCALITYS3 DONE******")
 
 tidb(push=push)
 print("******TIDB DONE******")
+
+# owncloud(push=push)
+# print("******OWNCLOUD DONE******")
 
 cockpit(push=push)
 print("******COCKPIT DONE******")
