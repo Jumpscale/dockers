@@ -230,7 +230,7 @@ def ovs(push=True):
 def scalityS3(push=True):
     d = j.sal.docker.create(name='build_scalityS3',
                             stdout=True,
-                            base="jumpscale/ubuntu1604_base",
+                            base="jumpscale/ubuntu1604_all",
                             nameserver=['8.8.8.8'],
                             replace=True,
                             myinit=True,
@@ -255,7 +255,7 @@ def scalityS3(push=True):
         'expose': '8000',
     }
 
-    d.commit("jumpscale/scalitys3", delete=True, force=True, push=push, conf=conf)
+    d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push, conf=conf)
 
 
 def sandbox(push):
@@ -499,11 +499,11 @@ print("******STATS DONE******")
 portal(push=push)
 print("******PORTAL DONE******")
 
-scalityS3(push=push)
-print("******SCALITYS3 DONE******")
-
 all(push=push)
 print("******ALL DONE******")
+
+scalityS3(push=push)
+print("******SCALITYS3 DONE******")
 
 tidb(push=push)
 print("******TIDB DONE******")
