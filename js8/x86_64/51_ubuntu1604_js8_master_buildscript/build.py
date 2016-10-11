@@ -106,6 +106,7 @@ def golang(push=True):
                             setrootrndpasswd=False)
 
     d.cuisine.development.golang.install()
+    d.cuisine.development.golang.install_godep()
     d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_golang", delete=True, force=True,
              push=push)
@@ -169,6 +170,7 @@ def owncloud(push=True):
 
     d.commit("jumpscale/ubuntu1604_all", delete=True, force=True,
              push=push)
+    d.destroy()
 
 
 def portal(push=True):
@@ -207,8 +209,11 @@ def all(push=True):
     d.cuisine.apps.brotli.build()
     d.cuisine.apps.brotli.install()
 
+    d.cuisine.apps.redis.build()
+
     d.cuisine.development.lua.installLuaTarantool()
 
+    d.cuisine.apps.syncthing.build(start=False)
     d.cuisine.apps.controller.build(start=False)
     d.cuisine.systemservices.g8oscore.build(start=False)
 
@@ -287,6 +292,8 @@ def scalityS3(push=True):
 
     d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push,
              conf=conf)
+
+    d.destroy()
 
 
 def sandbox(push):
@@ -382,7 +389,7 @@ def build_docker_fromsandbox(push):
 
 
 def storhost():
-    namespace = 'opt'
+    namespace = 'sandbox_ub1604'
 
     d = j.sal.docker.create(name='g8stor',
                             stdout=True,
@@ -394,7 +401,7 @@ def storhost():
                             ports="22:7022 8090:8090",
                             sharecode=False,
                             setrootrndpasswd=False, weavenet=True,
-                            vols="/mnt/aydostorx/namespaces/{namespace}:/storage/jstor/files".format(namespace=namespace))
+                            vols="/mnt/aydostorx/:/storage/jstor/".format(namespace=namespace))
 
     CONFIG = """
     listen_addr = "0.0.0.0:8090"
@@ -406,11 +413,11 @@ def storhost():
 
     d.cuisine.core.file_write("/etc/js_storx.toml", CONFIG)
 
-    # pm = d.cuisine.processmanager.get(pm="tmux")
+    pm = d.cuisine.processmanager.get(pm="tmux")
     cmd = "./stor -c /etc/js_storx.toml"
-    # pm.ensure(name="g8stor", cmd=cmd, env={}, path='/opt/jumpscale8/bin', descr='')
+    pm.ensure(name="g8stor", cmd=cmd, env={}, path='/opt/jumpscale8/bin', descr='')
 
-    d.cuisine.processmanager.ensure('g8stor', cmd, path='/opt/jumpscale8/bin')
+    # d.cuisine.processmanager.ensure('g8stor', cmd, path='/opt/jumpscale8/bin')
 
     if not j.sal.nettools.tcpPortConnectionTest("localhost", 8090):
         raise RuntimeError("cannot connect over tcp to port 8090 on localhost")
@@ -449,41 +456,50 @@ def js8fs():
                             weavenet=True,
                             vols="/storage/jstor/:/storage/jstor/")
 
-    config = '''\
+    config = """
     [[mount]]
-        path="/opt"
-        flist="/optvar/cfg/fs/js8_opt.flist"
-        backend="opt"
-        mode="RO"
-        trim_base=true
-    [backend]
-    [backend.opt]
-        path="/optvar/fs_backend/opt"
-        stor="public"
-        namespace="js8_opt"
-        cleanup_cron="@every 1h"
-        cleanup_older_than=24
-        log=""
-    [aydostor]
-    [aydostor.public]
-        #use the IP of the docker host.
-        #addr="http://172.17.0.1:8090"
+         path="/opt"
+         flist="/optvar/cfg/fs/js8_opt.flist"
+         backend="main"
+         #stor="stor1"
+         mode = "OL"
+         trim_base = true
+
+    [backend.main]
+        path="/tmp/aysfs_main"
+        stor="stor1"
+        #namespace="testing"
+        namespace="dedupe"
+
+        upload=true
+        encrypted=false
+        # encrypted=true
+        user_rsa="user.rsa"
+        store_rsa="store.rsa"
+
+        aydostor_push_cron="@every 1m"
+        cleanup_cron="@every 1m"
+        cleanup_older_than=1 #in hours
+
+    [aydostor.stor1]
         addr="http://g8stor:8090"
+        #addr="http://192.168.0.182:8080/"
         login=""
         passwd=""
-    '''
-    d.cuisine.package.ensure('fuse')
+    """
 
-    d.cuisine.core.file_copy('/builder/jumpscale8/bin/fs', '/usr/local/bin')
+    d.cuisine.package.ensure('fuse')
+    #
+    # d.cuisine.core.file_copy('/storage/jumpscale8/bin/fs', '/usr/local/bin')
     d.cuisine.core.dir_ensure('/optvar/cfg/fs/')
     d.cuisine.core.file_write('/optvar/cfg/fs/config.toml', config)
-    d.cuisine.core.file_copy('/builder/md/js8_opt.flist', '/optvar/cfg/fs/js8_opt.flist')
+    d.cuisine.core.file_copy('/storage/jstor/flist/sandbox_ub1604/opt.flist', '/optvar/cfg/fs/js8_opt.flist')
 
     d.cuisine.tools.sandbox.cleanup()
 
-    # pm = d.cuisine.processmanager.get(pm="tmux")
-    # pm.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
-    d.cuisine.processmanager.ensure('g8fs', cmd='/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
+    pm = d.cuisine.processmanager.get(pm="tmux")
+    pm.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
+    # d.cuisine.processmanager.ensure('g8fs', cmd='/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
 
     d.commit("jumpscale/g8fs", delete=True, force=True, push=False)
 
@@ -541,8 +557,8 @@ print("******SCALITYS3 DONE******")
 tidb(push=push)
 print("******TIDB DONE******")
 
-# owncloud(push=push)
-# print("******OWNCLOUD DONE******")
+owncloud(push=push)
+print("******OWNCLOUD DONE******")
 
 cockpit(push=push)
 print("******COCKPIT DONE******")
@@ -553,8 +569,8 @@ print("******SANDBOX DONE******")
 
 # will create a docker where all sandboxed files are in, can be used without the js8_fs
 
-build_docker_fromsandbox(push=push)
-print("******BUILD DOCKER FROM SANDBOX DONE******")
+# build_docker_fromsandbox(push=push)
+# print("******BUILD DOCKER FROM SANDBOX DONE******")
 
 # host a docker which becomes the host for our G8OS FS
 storhost()
