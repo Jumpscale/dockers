@@ -9,9 +9,10 @@ def resetAll():
     j.sal.btrfs.subvolumesDelete("/storage/builder", filterExclude="/docker")
     j.sal.docker.destroyAll()
     j.sal.docker.removeImages()
+    j.sal.process.execute("weave stop")
+    j.sal.process.execute("weave reset")
+    j.sal.process.execute("weave launch")
 
-
-# resetAll()
 
 def base(push=True):
 
@@ -80,8 +81,8 @@ def mariadb(push=True):
     d.cuisine.apps.mariadb.install()
 
     cmd = "/usr/sbin/mysqld --basedir=/usr --datadir=/data/db \
---plugin-dir=/usr/lib/mysql/plugin --log-error=/dev/log/mysql/error.log \
---pid-file=/var/run/mysqld/mysqld.pid --socket=/var/run/mysqld/mysqld.sock --port=3306"
+    --plugin-dir=/usr/lib/mysql/plugin --log-error=/dev/log/mysql/error.log \
+    --pid-file=/var/run/mysqld/mysqld.pid --socket=/var/run/mysqld/mysqld.sock --port=3306"
 
     d.cuisine.processmanager.ensure('mariadb', cmd)
 
@@ -527,50 +528,53 @@ def js8fs():
 
 
 def enableWeave():
+    # IS NOT WORKING #TODO: *1
     j.sal.docker.weaveInstall(ufw=True)
 
 # resetAll()
 
 push = True
+#
+# base(push=push)
+# print("******BASE DONE******")
+#
+# jumpscale(push=push)
+# print("******JUMPSCALE DONE******")
+#
+# golang(push=push)
+# print("******GOLANG DONE******")
+#
+# stats(push=push)
+# print("******STATS DONE******")
 
-base(push=push)
-print("******BASE DONE******")
+# portal(push=push)
+# print("******PORTAL DONE******")
 
-jumpscale(push=push)
-print("******JUMPSCALE DONE******")
+# all(push=push)
+# print("******ALL DONE******")
 
-golang(push=push)
-print("******GOLANG DONE******")
+# scalityS3(push=push)
+# print("******SCALITYS3 DONE******")
 
-stats(push=push)
-print("******STATS DONE******")
+# tidb(push=push)
+# print("******TIDB DONE******")
 
-portal(push=push)
-print("******PORTAL DONE******")
 
-all(push=push)
-print("******ALL DONE******")
-
-scalityS3(push=push)
-print("******SCALITYS3 DONE******")
-
-tidb(push=push)
-print("******TIDB DONE******")
-
-owncloud(push=push)
-print("******OWNCLOUD DONE******")
-
-cockpit(push=push)
-print("******COCKPIT DONE******")
+# owncloud(push=push)
+# print("******OWNCLOUD DONE******")
+#
+# cockpit(push=push)
+# print("******COCKPIT DONE******")
 
 # ovs(push=push)
+
 sandbox(push=push)
 print("******SANDBOX DONE******")
 
 # will create a docker where all sandboxed files are in, can be used without the js8_fs
 
-# build_docker_fromsandbox(push=push)
-# print("******BUILD DOCKER FROM SANDBOX DONE******")
+build_docker_fromsandbox(push=push)
+print("******BUILD DOCKER FROM SANDBOX DONE******")
 
 # host a docker which becomes the host for our G8OS FS
 storhost()
