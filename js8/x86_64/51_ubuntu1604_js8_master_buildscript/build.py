@@ -356,12 +356,13 @@ def sandbox(upload_to_stor=False):
     for path in paths:
         j.tools.sandboxer.copyTo(path, dest, excludeFileRegex=excludeFileRegex, excludeDirRegex=excludeDirRegex)
 
+    j.tools.sandboxer.copyTo('/usr/local/bin/', '%s/bin/' % base_dir, excludeFileRegex=excludeFileRegex, excludeDirRegex=excludeDirRegex)
 
-        if not j.sal.fs.exists("%s/bin/python" % base_dir):
-            j.sal.fs.symlink("%s/bin/python3" % base_dir, "%s/bin/python3.5" % base_dir, overwriteTarget=True)
+    if not j.sal.fs.exists("%s/bin/python" % base_dir):
+        j.sal.fs.symlink("%s/bin/python3" % base_dir, "%s/bin/python3.5" % base_dir, overwriteTarget=True)
 
-        j.tools.sandboxer.sandboxLibs("%s/lib" % base_dir, recursive=True)
-        j.tools.sandboxer.sandboxLibs("%s/bin" % base_dir, recursive=True)
+    j.tools.sandboxer.sandboxLibs("%s/lib" % base_dir, recursive=True)
+    j.tools.sandboxer.sandboxLibs("%s/bin" % base_dir, recursive=True)
 
     """
     d.cuisine.core.execute_jumpscript(js_script)
