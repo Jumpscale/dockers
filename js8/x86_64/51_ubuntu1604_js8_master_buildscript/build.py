@@ -9,9 +9,10 @@ def resetAll():
     j.sal.btrfs.subvolumesDelete("/storage/builder", filterExclude="/docker")
     j.sal.docker.destroyAll()
     j.sal.docker.removeImages()
+    j.sal.process.execute("weave stop")
+    j.sal.process.execute("weave reset")
+    j.sal.process.execute("weave launch")
 
-
-# resetAll()
 
 def base(push=True):
 
@@ -560,6 +561,7 @@ def js8fs():
 
 
 def enableWeave():
+    # IS NOT WORKING #TODO: *1
     j.sal.docker.weaveInstall(ufw=True)
 
 # resetAll()
