@@ -22,7 +22,7 @@ def base(push=True):
         bin_path = d.cuisine.bash.cmdGetPath('shellinaboxd')
         d.cuisine.core.file_copy(bin_path, "$binDir")
 
-    j.sal.btrfs.subvolumeCreate("/storage/jstor")
+    # j.sal.btrfs.subvolumeCreate("/storage/jstor")
     # j.sal.btrfs.subvolumeCreate("/storage/builder/sandbox_ub1604")
 
     d = j.sal.docker.create(name='build',
@@ -370,7 +370,7 @@ def sandbox(upload_to_stor=False):
     if upload_to_stor:
         if not '/root/.ssh/ovh_rsa' in j.do.listSSHKeyFromAgent():
             raise RuntimeError('ovh key must be loaded to push to stor')
-        stor = d._executor.jumpto('stor.jumpscale.org', identityfile='/home/reem/work/ovh_rsa')
+        stor = d._executor.jumpto('stor.jumpscale.org', identityfile='/root/.ssh/ovh_rsa')
         sp = stor._cuisine.tools.stor.getStorageSpace('sandbox_ub1604')
     else:
         sp = d.cuisine.tools.stor.getStorageSpace('sandbox_ub1604')
@@ -567,7 +567,7 @@ def enableWeave():
 
 # resetAll()
 
-push = True
+push = False
 
 base(push=push)
 print("******BASE DONE******")
@@ -598,20 +598,20 @@ print("******OWNCLOUD DONE******")
 
 cockpit(push=push)
 print("******COCKPIT DONE******")
-
-# ovs(push=push)
+#
+# # ovs(push=push)
 sandbox(upload_to_stor=False)
 print("******SANDBOX DONE******")
-
-# will create a docker where all sandboxed files are in, can be used without the js8_fs
-
-# build_docker_fromsandbox(push=push)
-# print("******BUILD DOCKER FROM SANDBOX DONE******")
-
-# host a docker which becomes the host for our G8OS FS
-storhost()
-print("******STORHOST DONE******")
-
-# now connect to our G8OS STOR
-js8fs()
-print("******JS8FS DONE******")
+#
+# # will create a docker where all sandboxed files are in, can be used without the js8_fs
+#
+# # build_docker_fromsandbox(push=push)
+# # print("******BUILD DOCKER FROM SANDBOX DONE******")
+#
+# # host a docker which becomes the host for our G8OS FS
+# storhost()
+# print("******STORHOST DONE******")
+#
+# # now connect to our G8OS STOR
+# js8fs()
+# print("******JS8FS DONE******")
