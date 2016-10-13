@@ -296,9 +296,10 @@ def scalityS3(push=True):
     d.destroy()
 
 
-def sandbox(push):
+def sandbox(upload_to_stor=False):
 
     # create new docker to do the sandboxing in, needs to start from the development sandbox
+    vols = "/storage/jstor:/storage/jstor/" if not upload_to_stor else ''
     d = j.sal.docker.create(name='sandboxer',
                             stdout=True,
                             base='jumpscale/ubuntu1604_all',
@@ -308,7 +309,7 @@ def sandbox(push):
                             ssh=True,
                             sharecode=False,
                             setrootrndpasswd=False, weavenet=False,
-                            vols="/storage/jstor:/storage/jstor/")
+                            vols=vols)
 
     # copy tools & update
     s = """
@@ -339,7 +340,39 @@ def sandbox(push):
     """
     d.cuisine.core.execute_bash(s)
 
-    sp = d.cuisine.tools.stor.getStorageSpace('sandbox_ub1604')
+    js_script = """
+    paths = []
+    paths.append("/usr/lib/python3/dist-packages")
+    paths.append("/usr/lib/python3.5/")
+    paths.append("/usr/local/lib/python3.5/dist-packages")
+
+    base_dir = j.tools.cuisine.local.core.dir_paths['base']
+    dest = j.sal.fs.joinPaths(base_dir, 'lib')
+
+    excludeFileRegex = ["-tk/", "/lib2to3", "-34m-", ".egg-info", "lsb_release"]
+    excludeDirRegex = ["/JumpScale", "\.dist-info", "config-x86_64-linux-gnu", "pygtk"]
+
+    for path in paths:
+        j.tools.sandboxer.copyTo(path, dest, excludeFileRegex=excludeFileRegex, excludeDirRegex=excludeDirRegex)
+
+
+        if not j.sal.fs.exists("%s/bin/python" % base_dir):
+            j.sal.fs.symlink("%s/bin/python3" % base_dir, "%s/bin/python3.5" % base_dir, overwriteTarget=True)
+
+        j.tools.sandboxer.sandboxLibs("%s/lib" % base_dir, recursive=True)
+        j.tools.sandboxer.sandboxLibs("%s/bin" % base_dir, recursive=True)
+
+    """
+    d.cuisine.core.execute_jumpscript(js_script)
+
+    if upload_to_stor:
+        if not '/root/.ssh/ovh_rsa' in j.do.listSSHKeyFromAgent():
+            raise RuntimeError('ovh key must be loaded to push to stor')
+        stor = d._executor.jumpto('stor.jumpscale.org', identityfile='/home/reem/work/ovh_rsa')
+        sp = stor._cuisine.tools.stor.getStorageSpace('sandbox_ub1604')
+    else:
+        sp = d.cuisine.tools.stor.getStorageSpace('sandbox_ub1604')
+
     sp.upload('opt', source='/opt')
     # remove docker
     d.destroy()
@@ -564,7 +597,7 @@ cockpit(push=push)
 print("******COCKPIT DONE******")
 
 # ovs(push=push)
-sandbox(push=push)
+sandbox(upload_to_stor=False)
 print("******SANDBOX DONE******")
 
 # will create a docker where all sandboxed files are in, can be used without the js8_fs
