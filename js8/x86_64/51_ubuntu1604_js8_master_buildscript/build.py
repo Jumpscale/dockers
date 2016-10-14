@@ -298,7 +298,6 @@ def scalityS3(push=True):
 
 
 def sandbox(upload_to_stor=False):
-
     # create new docker to do the sandboxing in, needs to start from the development sandbox
     vols = "/storage/jstor:/storage/jstor/" if not upload_to_stor else ''
     d = j.sal.docker.create(name='sandboxer',
@@ -338,10 +337,16 @@ def sandbox(upload_to_stor=False):
     mkdir -p /opt/jumpscale8/lib/lua/tarantool/
     rsync -rv /usr/share/tarantool/ /opt/jumpscale8/lib/lua/tarantool/
 
+    ### temp until we rebuild full stack
+    pip uninstall snappy -y
+    apt-get install libsnappy-dev  libsnappy1v5 -y
+    pip install python-snappy
+
     """
     d.cuisine.core.execute_bash(s)
 
     js_script = """
+    from JumpScale import j
     paths = []
     paths.append("/usr/lib/python3/dist-packages")
     paths.append("/usr/lib/python3.5/")
@@ -368,14 +373,53 @@ def sandbox(upload_to_stor=False):
     d.cuisine.core.execute_jumpscript(js_script)
 
     if upload_to_stor:
-        if not '/root/.ssh/ovh_rsa' in j.do.listSSHKeyFromAgent():
-            raise RuntimeError('ovh key must be loaded to push to stor')
-        stor = d._executor.jumpto('stor.jumpscale.org', identityfile='/root/.ssh/ovh_rsa')
-        sp = stor._cuisine.tools.stor.getStorageSpace('sandbox_ub1604')
+        # checkout branch. temporarily
+        new_cfg = """
+        [core]
+        	repositoryformatversion = 0
+        	filemode = true
+        	bare = false
+        	logallrefupdates = true
+        [remote "origin"]
+        	url = https://github.com/Jumpscale/jumpscale_core8.git
+        	fetch = +refs/heads/*:refs/remotes/origin/*
+        [branch "master"]
+        	remote = origin
+        	merge = refs/heads/master
+        """
+        d.cuisine.core.file_write('/opt/code/github/jumpscale/jumpscale_core8/.git/config', new_cfg)
+        cmd = "cd /opt/code/github/jumpscale/jumpscale_core8; git checkout .; git pull; git checkout ays81"
+        # d.cuisine.development.git.pullRepo('https://github.com/Jumpscale/jumpscale_core8.git', branch='ays81')
+        d.cuisine.core.run(cmd)
+
+        d.cuisine.core.upload('/root/.ssh/stor_rsa', '/root/.ssh/')
+        d.cuisine.core.upload('/root/.ssh/stor_rsa.pub', '/root/.ssh/')
+
+        upload = """
+        from JumpScale import j
+        j.do.loadSSHKeys('/root/.ssh/stor_rsa')
+        stor_exec = j.tools.executor.getSSHBased('stor.jumpscale.org')
+        stor_cuisine = j.tools.cuisine.get(stor_exec)
+
+        ### upload to stor
+        sp = stor_cuisine.tools.stor.getStorageSpace('sandbox_ub1604')
+        sp.upload('opt', source='/opt')
+
+        ### run integrity tests
+        stor_cuisine.core.run("curl https://arya.maxux.net/gig/flist/integrity.sh > /tmp/integrity.sh && bash /tmp/integrity.sh sandbox_ub1604 opt.flist")
+        missing = stor_cuisine.core.file_read("/tmp/stor.missing")
+        # upload missing files
+        scl = j.clients.storx.get('https://stor.jumpscale.org/stor2')
+        for path in missing.splitlines():
+            if not path:
+                continue
+            scl.putFile('sandbox_ub1604', path)
+        """
+        d.cuisine.core.execute_jumpscript(upload)
     else:
         sp = d.cuisine.tools.stor.getStorageSpace('sandbox_ub1604')
+        sp.upload('opt', source='/opt')
 
-    sp.upload('opt', source='/opt')
     # remove docker
     d.destroy()
 
@@ -567,7 +611,7 @@ def enableWeave():
 
 # resetAll()
 
-push = False
+push = True
 
 base(push=push)
 print("******BASE DONE******")
@@ -598,9 +642,9 @@ print("******OWNCLOUD DONE******")
 
 cockpit(push=push)
 print("******COCKPIT DONE******")
-#
-# # ovs(push=push)
-sandbox(upload_to_stor=False)
+
+# # # ovs(push=push)
+sandbox(upload_to_stor=True)
 print("******SANDBOX DONE******")
 #
 # # will create a docker where all sandboxed files are in, can be used without the js8_fs
