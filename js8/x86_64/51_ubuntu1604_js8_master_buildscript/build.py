@@ -1,5 +1,6 @@
 
 from JumpScale import j
+import sys
 
 j.data.cache.reset()  # make sure cache is gone
 
@@ -337,11 +338,6 @@ def sandbox(upload_to_stor=False):
     mkdir -p /opt/jumpscale8/lib/lua/tarantool/
     rsync -rv /usr/share/tarantool/ /opt/jumpscale8/lib/lua/tarantool/
 
-    ### temp until we rebuild full stack
-    pip uninstall snappy -y
-    apt-get install libsnappy-dev  libsnappy1v5 -y
-    pip install python-snappy
-
     """
     d.cuisine.core.execute_bash(s)
 
@@ -373,25 +369,6 @@ def sandbox(upload_to_stor=False):
     d.cuisine.core.execute_jumpscript(js_script)
 
     if upload_to_stor:
-        # checkout branch. temporarily
-        new_cfg = """
-        [core]
-        	repositoryformatversion = 0
-        	filemode = true
-        	bare = false
-        	logallrefupdates = true
-        [remote "origin"]
-        	url = https://github.com/Jumpscale/jumpscale_core8.git
-        	fetch = +refs/heads/*:refs/remotes/origin/*
-        [branch "master"]
-        	remote = origin
-        	merge = refs/heads/master
-        """
-        d.cuisine.core.file_write('/opt/code/github/jumpscale/jumpscale_core8/.git/config', new_cfg)
-        cmd = "cd /opt/code/github/jumpscale/jumpscale_core8; git checkout .; git pull; git checkout ays81"
-        # d.cuisine.development.git.pullRepo('https://github.com/Jumpscale/jumpscale_core8.git', branch='ays81')
-        d.cuisine.core.run(cmd)
-
         d.cuisine.core.upload('/root/.ssh/stor_rsa', '/root/.ssh/')
         d.cuisine.core.upload('/root/.ssh/stor_rsa.pub', '/root/.ssh/')
 
@@ -611,51 +588,56 @@ def enableWeave():
 
 # resetAll()
 
-push = True
+if __name__ == "__main__":
+    # To set push=False from cmd line, do jspython build.py False
 
-base(push=push)
-print("******BASE DONE******")
+    args = sys.argv[1:]
+    push = j.data.text.getBool(args[0]) if args else True
+    print(push)
 
-jumpscale(push=push)
-print("******JUMPSCALE DONE******")
+    base(push=push)
+    print("******BASE DONE******")
 
-golang(push=push)
-print("******GOLANG DONE******")
+    jumpscale(push=push)
+    print("******JUMPSCALE DONE******")
 
-stats(push=push)
-print("******STATS DONE******")
+    golang(push=push)
+    print("******GOLANG DONE******")
 
-portal(push=push)
-print("******PORTAL DONE******")
+    stats(push=push)
+    print("******STATS DONE******")
 
-all(push=push)
-print("******ALL DONE******")
+    portal(push=push)
+    print("******PORTAL DONE******")
 
-scalityS3(push=push)
-print("******SCALITYS3 DONE******")
+    all(push=push)
+    print("******ALL DONE******")
 
-tidb(push=push)
-print("******TIDB DONE******")
+    scalityS3(push=push)
+    print("******SCALITYS3 DONE******")
 
-owncloud(push=push)
-print("******OWNCLOUD DONE******")
+    tidb(push=push)
+    print("******TIDB DONE******")
 
-cockpit(push=push)
-print("******COCKPIT DONE******")
+    owncloud(push=push)
+    print("******OWNCLOUD DONE******")
 
-# # # ovs(push=push)
-sandbox(upload_to_stor=True)
-print("******SANDBOX DONE******")
-#
-# # will create a docker where all sandboxed files are in, can be used without the js8_fs
-#
-# # build_docker_fromsandbox(push=push)
-# # print("******BUILD DOCKER FROM SANDBOX DONE******")
-#
-# # host a docker which becomes the host for our G8OS FS
-# storhost()
-# print("******STORHOST DONE******")
-#
-# # now connect to our G8OS STOR
-# js8fs()
-# print("******JS8FS DONE******")
+    cockpit(push=push)
+    print("******COCKPIT DONE******")
+
+    # # # ovs(push=push)
+    sandbox(upload_to_stor=push)
+    print("******SANDBOX DONE******")
+
+    # # will create a docker where all sandboxed files are in, can be used without the js8_fs
+    #
+    # # build_docker_fromsandbox(push=push)
+    # # print("******BUILD DOCKER FROM SANDBOX DONE******")
+    #
+    # # host a docker which becomes the host for our G8OS FS
+    # storhost()
+    # print("******STORHOST DONE******")
+    #
+    # # now connect to our G8OS STOR
+    # js8fs()
+    # print("******JS8FS DONE******")
