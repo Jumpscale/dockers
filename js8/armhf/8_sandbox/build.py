@@ -1,7 +1,6 @@
 from JumpScale import j
 
 
-# j.do.createDir("/tmp/build")
 vols='/bd_build:%s#/build:/tmp/build'%curdir
 print (vols)
 
@@ -32,11 +31,11 @@ d.sandbox()
 
 
 COPY="""
-j.do.delete("/build/opt/jumpscale8/")
-j.do.delete("/build/optvar/")
-j.do.copyTree("/opt/jumpscale8/","/build/opt/jumpscale8/")
-j.do.copyTree("/optvar/","/build/optvar/")
-j.do.delete("/build/opt/jumpscale8/bin/metadata.db")
+j.sal.fs.removeDirTree("/build/opt/jumpscale8/")
+j.sal.fs.removeDirTree("/build/optvar/")
+j.sal.fs.copyDirTree("/opt/jumpscale8/","/build/opt/jumpscale8/")
+j.sal.fs.copyDirTree("/optvar/","/build/optvar/")
+j.sal.fs.remove("/build/opt/jumpscale8/bin/metadata.db")
 """
 
 d.cuisine.core.execute_bash(PREPARE)

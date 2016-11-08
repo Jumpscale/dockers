@@ -371,7 +371,7 @@ def sandbox(upload_to_stor=False):
 
         upload = """
         from JumpScale import j
-        j.do.loadSSHKeys('/root/.ssh/stor_rsa')
+        j.sal.ssh.loadSSHKeys('/root/.ssh/stor_rsa')
         stor_exec = j.tools.executor.getSSHBased('stor.jumpscale.org')
         stor_cuisine = j.tools.cuisine.get(stor_exec)
 

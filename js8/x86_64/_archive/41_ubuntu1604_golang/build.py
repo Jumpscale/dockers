@@ -1,6 +1,6 @@
 from JumpScale import j
 
-j.do.createDir("/tmp/build")
+j.sal.fs.createDir("/tmp/build")
 vols = '/bd_build:%s#/build:/tmp/build' % j.sal.fs.getcwd()
 print(vols)
 
