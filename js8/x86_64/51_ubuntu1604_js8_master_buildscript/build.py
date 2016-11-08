@@ -215,9 +215,6 @@ def all(push=True):
 
     d.cuisine.development.lua.installLuaTarantool()
 
-    d.cuisine.apps.syncthing.build(start=False)
-    d.cuisine.apps.controller.build(start=False)
-    d.cuisine.systemservices.g8oscore.build(start=False)
 
     d.cuisine.systemservices.g8osfs.build(start=False)
     d.cuisine.systemservices.aydostor.build(start=False)
