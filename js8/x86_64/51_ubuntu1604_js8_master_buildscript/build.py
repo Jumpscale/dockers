@@ -402,7 +402,6 @@ def build_docker_fromsandbox(push):
     """
     rsync files back after sandbox to a small ubuntu
     """
-
     d = j.sal.docker.create(name='js8_sandbox',
                             stdout=True,
                             base='jumpscale/ubuntu1604',
@@ -416,7 +415,7 @@ def build_docker_fromsandbox(push):
 
     print("create sandbox")
 
-    # d.executor.sshclient.rsync_up("/storage/jstor/", "/opt/jumpscale8/")
+    #d.executor.sshclient.rsync_up("/storage/jstor/", "/opt/jumpscale8/")
 
     s = """
     set -ex
@@ -487,16 +486,18 @@ def storhost():
                             privileged=True,
                             setrootrndpasswd=False,
                             weavenet=True,
-                            vols="/mnt/aydostorx/namespaces/{namespace}:/storage/jstor/files".format(namespace=namespace))
+                            vols="/mnt/aydostorx/namespaces/{namespace}:/storage/jstor/namespaces/{namespace}".format(namespace=namespace))
+    pm = d.cuisine.processmanager.get(pm="tmux")
+    pm.ensure(name="g8stor", cmd=cmd, env={}, path='/opt/jumpscale8/bin', descr='')
 
     if not j.sal.nettools.tcpPortConnectionTest("localhost", 8090):
         raise RuntimeError("cannot connect over tcp to port 8090 on localhost after launching g8stor in docker.")
+    return d.getIp()
 
-
-def js8fs():
+def js8fs(store_ip=""):
 
     name = "ubuntu1604_g8os_base"
-    j.actions.resetAll()
+    #j.actions.resetAll()
 
     d = j.sal.docker.create(name=name,
                             stdout=True,
@@ -517,12 +518,13 @@ def js8fs():
          #stor="stor1"
          mode = "OL"
          trim_base = true
+         trim = "/opt"
 
     [backend.main]
         path="/tmp/aysfs_main"
         stor="stor1"
         #namespace="testing"
-        namespace="dedupe"
+        namespace="sandbox_ub1604"
 
         upload=true
         encrypted=false
@@ -535,21 +537,22 @@ def js8fs():
         cleanup_older_than=1 #in hours
 
     [aydostor.stor1]
-        addr="http://g8stor:8090"
+        addr="http://%s:8090"
+        #addr="http://g8stor:8090"
         #addr="http://192.168.0.182:8080/"
         login=""
         passwd=""
     """
-
     d.cuisine.package.ensure('fuse')
     #
-    # d.cuisine.core.file_copy('/storage/jumpscale8/bin/fs', '/usr/local/bin')
+    #d.cuisine.core.file_copy('/storage/jumpscale8/bin/fs', '/usr/local/bin')
     d.cuisine.core.dir_ensure('/optvar/cfg/fs/')
-    d.cuisine.core.file_write('/optvar/cfg/fs/config.toml', config)
+    d.cuisine.core.file_write('/optvar/cfg/fs/config.toml', config % store_ip)
     d.cuisine.core.file_copy('/storage/jstor/flist/sandbox_ub1604/opt.flist', '/optvar/cfg/fs/js8_opt.flist')
 
     d.cuisine.tools.sandbox.cleanup()
-
+    d.cuisine.core.file_download(url="https://stor.jumpscale.org/public/fs", to='/usr/local/bin/fs')
+    d.cuisine.core.run('chmod +x /usr/local/bin/fs')
     pm = d.cuisine.processmanager.get(pm="tmux")
     pm.ensure('g8fs', '/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
     # d.cuisine.processmanager.ensure('g8fs', cmd='/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
@@ -570,18 +573,20 @@ def js8fs():
                             setrootrndpasswd=True,
                             weavenet=True)
 
+    d.cuisine.processmanager.ensure('g8fs', cmd='/usr/local/bin/fs -c /optvar/cfg/fs/config.toml')
     s = """
         set -ex
         cd /opt/jumpscale8
         source env.sh
         js 'j.tools.console.echo("SUCCEEDED")'
         """
+
     d.cuisine.core.execute_bash(s)
 
 
 def enableWeave():
     # IS NOT WORKING #TODO: *1
-    j.sal.docker.weaveInstall(ufw=True)
+    j.sal.docker.weaveInstall(ufw=False)
 
 # resetAll()
 
@@ -622,19 +627,20 @@ if __name__ == "__main__":
     cockpit(push=push)
     print("******COCKPIT DONE******")
 
-    # # # ovs(push=push)
-    sandbox(upload_to_stor=push)
-    print("******SANDBOX DONE******")
-
-    # # will create a docker where all sandboxed files are in, can be used without the js8_fs
+    ### # # ovs(push=push)
+    #enableWeave()
+    # sandbox(upload_to_stor=push)
+    # #print("******SANDBOX DONE******")
     #
-    # # build_docker_fromsandbox(push=push)
-    # # print("******BUILD DOCKER FROM SANDBOX DONE******")
-    #
-    # # host a docker which becomes the host for our G8OS FS
-    # storhost()
+    # # # will create a docker where all sandboxed files are in, can be used without the js8_fs
+    # #
+    # build_docker_fromsandbox(push=push)
+    # print("******BUILD DOCKER FROM SANDBOX DONE******")
+    # #
+    # # # host a docker which becomes the host for our G8OS FS
+    # store_ip = storhost()
     # print("******STORHOST DONE******")
-    #
-    # # now connect to our G8OS STOR
-    # js8fs()
+    # #
+    # # # now connect to our G8OS STOR
+    # js8fs(store_ip)
     # print("******JS8FS DONE******")
