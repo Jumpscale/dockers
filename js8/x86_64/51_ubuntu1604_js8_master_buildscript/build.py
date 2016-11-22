@@ -1,9 +1,11 @@
 
 from JumpScale import j
 import sys
+import time
+from unittest import TestCase
 
 j.data.cache.reset()  # make sure cache is gone
-
+tc = TestCase('__init__')
 
 def resetAll():
     # DANGEROUS WILL CLEAN ALL LOCAL BTRFS VOLUMES
@@ -14,15 +16,12 @@ def resetAll():
     j.sal.process.execute("weave reset")
     j.sal.process.execute("weave launch")
 
-
 def base(push=True):
-
     # move to app in cuisine under apps and call from here
     def shellinabox(d):
         d.cuisine.package.install('shellinabox')
         bin_path = d.cuisine.bash.cmdGetPath('shellinaboxd')
         d.cuisine.core.file_copy(bin_path, "$binDir")
-
     # j.sal.btrfs.subvolumeCreate("/storage/jstor")
     # j.sal.btrfs.subvolumeCreate("/storage/builder/sandbox_ub1604")
 
@@ -46,9 +45,14 @@ def base(push=True):
     shellinabox(d)
 
     d.cuisine.tools.sandbox.cleanup()
+
+    check = d.cuisine.core.run('dpkg -l  base | grep  -o -F "base"')
+    tc.assertEqual(check[1], 'base')
+    check = d.cuisine.core.run('dpkg -l  python3-pip | grep  -o -F "python3-pip"')
+    tc.assertEqual(check[1], 'python3-pip')
+
     d.commit("jumpscale/ubuntu1604_base", delete=True, force=True,
              push=push)
-
 
 def jumpscale(push=True):
     d = j.sal.docker.create(name='build',
@@ -63,9 +67,20 @@ def jumpscale(push=True):
 
     d.cuisine.development.js8.install(deps=False)
     d.cuisine.tools.sandbox.cleanup()
+
+    time.sleep(40)
+    check = d.cuisine.core.run('js "print(1)"')
+    tc.assertEqual(check[1], '1')
+    check = d.cuisine.core.run('ls /optvar')
+    tc.assertRegex(check[1], 'cfg')
+    tc.assertRegex(check[1], 'data')
+    check = d.cuisine.core.run('ls /opt/jumpscale8/')
+    tc.assertRegex(check[1], 'bin')
+    tc.assertRegex(check[1], 'env.sh')
+    tc.assertRegex(check[1], 'lib')
+
     d.commit("jumpscale/ubuntu1604_js8", delete=True, force=True,
              push=push)
-
 
 def mariadb(push=True):
     d = j.sal.docker.create(name='build',
@@ -91,10 +106,11 @@ def mariadb(push=True):
         'volume': '/data/db',
         'expose': '3306',
     }
+    check = d.cuisine.core.run('ps aux | grep mariadb | grep -v grep | wc -l')
+    tc.assertGreater(int(check[1]), 0)
 
     d.commit("jumpscale/ubuntu1604_mariadb", delete=True, force=True,
              push=push, conf=conf)
-
 
 def golang(push=True):
     d = j.sal.docker.create(name='build',
@@ -109,10 +125,11 @@ def golang(push=True):
 
     d.cuisine.development.golang.install()
     d.cuisine.development.golang.install_godep()
+    check = d.cuisine.core.run('ls /optvar/go/bin/godep')
+    tc.assertEqual(check[1], '/optvar/go/bin/godep')
     d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_golang", delete=True, force=True,
              push=push)
-
 
 def stats(push=True):
     d = j.sal.docker.create(name='build',
@@ -125,16 +142,25 @@ def stats(push=True):
                             sharecode=False,
                             setrootrndpasswd=False)
 
-    d.cuisine.apps.mongodb.build(start=False)
+    d.cuisine.apps.mongodb.build(start=True)
 
-    d.cuisine.apps.influxdb.install()
+    d.cuisine.apps.influxdb.install(start=True)
 
     d.cuisine.apps.grafana.build()
+    d.cuisine.apps.grafana.install(start=True)
 
     d.cuisine.tools.sandbox.cleanup()
+
+    check = d.cuisine.core.run('/opt/jumpscale8/bin/mongo --host 127.0.01 --port 27017'
+                                        ' --eval "print("1234")" | grep -o -F "1234"')
+    tc.assertEqual(check[1], '1234')
+    check = d.cuisine.core.run('netstat -ntlp | grep grafana | grep -o -F "3000"')
+    tc.assertEqual(check[1], '3000')
+    check = d.cuisine.core.run('ps aux | grep influx | grep -v grep | wc -l')
+    tc.assertGreater(int(check[1]), 0)
+
     d.commit("jumpscale/ubuntu1604_stats", delete=True, force=True,
              push=push)
-
 
 def tidb(push=True):
     d = j.sal.docker.create(name='build',
@@ -150,10 +176,13 @@ def tidb(push=True):
     d.cuisine.development.rust.install()
     d.cuisine.apps.tidb.build(install=True)
     d.cuisine.tools.sandbox.cleanup()
+    check = d.cuisine.core.run('ps ')
+    tc.assertGreater(int(check[1]), 0)
     d.commit("jumpscale/ubuntu1604_all", delete=True, force=True,
              push=push)
 
-
+# the checks in these function is not complete
+# nginx most probably is not fully started
 def owncloud(push=True):
     d = j.sal.docker.create(name='owncloud',
                             stdout=True,
@@ -170,10 +199,27 @@ def owncloud(push=True):
     d.cuisine.development.php.install()
     d.cuisine.apps.owncloud.install(start=False)
 
+    d.commit("jumpscale/owncloud_test", delete=False, force=False,
+             push=False)
+    d_test = j.sal.docker.create(name='owncloud2',
+                                stdout=True,
+                                base="jumpscale/owncloud_test",
+                                nameserver=['8.8.8.8'],
+                                replace=True,
+                                myinit=True,
+                                ssh=True,
+                                sharecode=False,
+                                setrootrndpasswd=False)
+    d_test.cuisine.apps.nginx.stop()
+    d_test.cuisine.apps.owncloud.start(sitename='jsowncloud.com')
+    check = d_test.cuisine.core.run('ps aux | grep php-fpm | grep -v grep | wc -l')
+    tc.assertGreater(int(check[1]), 0)
+    check = d_test.cuisine.core.run('ls /optvar/cfg/nginx/etc/sites-enabled/owncloudy.com')
+    tc.assertEqual(check[1], '/optvar/cfg/nginx/etc/sites-enabled/jsowncloud.com')
+
     d.commit("jumpscale/ubuntu1604_all", delete=True, force=True,
              push=push)
     d.destroy()
-
 
 def portal(push=True):
     d = j.sal.docker.create(name='build',
@@ -186,12 +232,16 @@ def portal(push=True):
                             sharecode=False,
                             setrootrndpasswd=False)
 
-    d.cuisine.apps.portal.install(start=False)
+    d.cuisine.apps.portal.install(start=True)
+
+    check = d.cuisine.core.run('ps aux | grep influx | grep -v grep | wc -l')
+    tc.assertGreater(int(check[1]), 0)
+
+    j.tools.cuisine.local.apps.portal.stop()
 
     d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_portal", delete=True, force=True,
              push=push)
-
 
 def all(push=True):
     d = j.sal.docker.create(name='build',
@@ -207,14 +257,20 @@ def all(push=True):
     d.cuisine.apps.caddy.install(start=False)
 
     d.cuisine.apps.geodns.install()
+    d.cuisine.apps.geodns.start()
+    tc.assertEqual(d.cuisine.apps.geodns.isInstalled(), True)
+    check = d.cuisine.core.run('netstat -ntlp | grep geodns | grep -o -F 5053')
+    tc.assertEqual(check[1], '5053')
+    d.cuisine.apps.geodns.stop()
 
     d.cuisine.apps.brotli.build()
     d.cuisine.apps.brotli.install()
 
-    d.cuisine.apps.redis.build()
+    d.cuisine.apps.redis.build(start=True)
+    check = d.cuisine.core.run('/opt/jumpscale8/bin/redis-cli -h 127.0.0.1 -p 6379 -r 2 Ping')
+    tc.assertEqual(check[1], 'PONG\nPONG')
 
     d.cuisine.development.lua.installLuaTarantool()
-
 
     d.cuisine.systemservices.g8osfs.build(start=False)
     d.cuisine.systemservices.aydostor.build(start=False)
@@ -222,7 +278,6 @@ def all(push=True):
     d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_all", delete=True, force=True,
              push=push)
-
 
 def cockpit(push=True):
     d = j.sal.docker.create(name='build_phase2',
@@ -235,12 +290,13 @@ def cockpit(push=True):
                             sharecode=False,
                             setrootrndpasswd=False)
 
-    d.cuisine.solutions.cockpit.install(start=False)
+    d.cuisine.solutions.cockpit.install(start=True)
+    check = d.cuisine.core.run('ps aux | grep cockpit | grep -v grep | wc -l')
+    tc.assertGreater(int(check[1]), 0)
 
     d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_cockpit", delete=True, force=True,
              push=push)
-
 
 def ovs(push=True):
     d = j.sal.docker.create(name='build_phase2',
@@ -259,7 +315,6 @@ def ovs(push=True):
     d.cuisine.tools.sandbox.cleanup()
     d.commit("jumpscale/ubuntu1604_ovs", delete=True, force=True,
              push=push)
-
 
 def scalityS3(push=True):
     d = j.sal.docker.create(name='build_scalityS3',
@@ -288,6 +343,9 @@ def scalityS3(push=True):
         'volume': '/data',
         'expose': '8000',
     }
+
+    check = d.cuisine.core.run('ps aux | grep scalityS3 | grep -v grep | wc -l')
+    tc.assertGreater(int(check[1]), 0)
 
     d.commit("jumpscale/ubuntu1604_all", delete=True, force=True, push=push,
              conf=conf)
@@ -626,6 +684,10 @@ if __name__ == "__main__":
 
     cockpit(push=push)
     print("******COCKPIT DONE******")
+
+    mariadb(push=push)
+    print("******mariadb DONE******")
+
 
     ### # # ovs(push=push)
     #enableWeave()
