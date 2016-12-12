@@ -17,9 +17,9 @@ d = j.sal.docker.create(name='build',
 d.cuisine.apps.volumedriver.build(start=False)
 
 # clean source file
-d.cuisine.core.dir_remove('$tmpDir')
-d.cuisine.core.dir_ensure('$tmpDir')
-d.cuisine.core.dir_remove('$codeDir/github/openvstorage')
-d.cuisine.core.dir_remove('$codeDir/github/domsj')
+d.cuisine.core.dir_remove('$TMPDIR')
+d.cuisine.core.dir_ensure('$TMPDIR')
+d.cuisine.core.dir_remove('$CODEDIR/github/openvstorage')
+d.cuisine.core.dir_remove('$CODEDIR/github/domsj')
 
 d.commit("jumpscale/%s" % name, delete=True, force=True)

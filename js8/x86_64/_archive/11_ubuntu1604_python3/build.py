@@ -34,8 +34,8 @@ shellinabox(d)
 # make sure brotli is installed
 if not d.cuisine.core.command_check('bro'):
     bro_script = """
-    cd $tmpDir; git clone https://github.com/google/brotli.git
-    cd $tmpDir/brotli/
+    cd $TMPDIR; git clone https://github.com/google/brotli.git
+    cd $TMPDIR/brotli/
     python setup.py install
     make bro
     cp bin/bro $binDir/bro

@@ -16,7 +16,7 @@ d = j.sal.docker.create(name='build',
 
 d.cuisine.apps.alba.build(start=False)
 # clean source file
-d.cuisine.core.dir_remove('$tmpDir')
-d.cuisine.core.dir_ensure('$tmpDir')
+d.cuisine.core.dir_remove('$TMPDIR')
+d.cuisine.core.dir_ensure('$TMPDIR')
 
 d.commit("jumpscale/%s" % name, delete=True, force=True)

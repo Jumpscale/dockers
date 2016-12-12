@@ -28,7 +28,7 @@ d.cuisine.development.pip.install('uvloop')
 
 d.cuisine.apps.jsagent.install(reset=True, start=False)
 
-d.cuisine.core.dir_remove("$tmpDir/*")
-d.cuisine.core.dir_remove("$varDir/data/*")
+d.cuisine.core.dir_remove("$TMPDIR/*")
+d.cuisine.core.dir_remove("$VARDIR/data/*")
 
 d.commit("jumpscale/%s" % name, delete=True, force=True)

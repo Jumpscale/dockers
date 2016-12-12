@@ -34,11 +34,11 @@ cmd = '$binDir/redis-server --protected-mode no'
 pm.ensure(name='redis', cmd=cmd, env={}, path='/', descr='')
 
 # copy controller template config
-home = d.cuisine.core.args_replace('$tmplsDir/cfg/controller/')
+home = d.cuisine.core.args_replace('$TEMPLATEDIR/cfg/controller/')
 template = d.cuisine.core.file_read(j.sal.fs.joinPaths(home, 'agentcontroller.toml'))
 config = d.cuisine.core.args_replace(template)
 
-dest = d.cuisine.core.args_replace('$cfgDir/controller/')
+dest = d.cuisine.core.args_replace('$JSCFGDIR/controller/')
 d.cuisine.core.dir_ensure(dest)
 cfg_path = j.sal.fs.joinPaths(dest, 'agentcontroller.toml')
 d.cuisine.core.file_write(cfg_path, config)

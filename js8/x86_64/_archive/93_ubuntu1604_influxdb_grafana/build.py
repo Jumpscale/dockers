@@ -30,9 +30,9 @@ embed()
 p
 
 
-# d.cuisine.core.dir_remove("$goDir/src/*")
-# d.cuisine.core.dir_remove("$tmpDir/*")
-# d.cuisine.core.dir_remove("$varDir/data/*")
+# d.cuisine.core.dir_remove("$GODIR/src/*")
+# d.cuisine.core.dir_remove("$TMPDIR/*")
+# d.cuisine.core.dir_remove("$VARDIR/data/*")
 
 # d.commit("jumpscale/%s" % name, delete=True, force=True)
 
