@@ -38,7 +38,7 @@ if not d.cuisine.core.command_check('bro'):
     cd $TMPDIR/brotli/
     python setup.py install
     make bro
-    cp bin/bro $binDir/bro
+    cp bin/bro $BINDIR/bro
     """
     d.cuisine.core.execute_bash(bro_script)
 

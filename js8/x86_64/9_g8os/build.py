@@ -26,7 +26,7 @@ cuisine.core.dir_ensure('/usr/lib/g8os/')
 cuisine.core.dir_ensure('/var/log/g8os/')
 
 # binaries
-cuisine.core.file_copy('$binDir/core', '/usr/bin/')
+cuisine.core.file_copy('$BINDIR/core', '/usr/bin/')
 
 sourcepath = "$GODIR/src/github.com/g8os/core"
 
@@ -51,7 +51,7 @@ cuisine.core.file_copy(
     recursive=True)
 cuisine.core.dir_ensure('/usr/lib/g8os/extensions/syncthing')
 cuisine.core.file_copy(
-    '$binDir/syncthing',
+    '$BINDIR/syncthing',
     '/usr/lib/g8os/extensions/syncthing')
 
 # corectl

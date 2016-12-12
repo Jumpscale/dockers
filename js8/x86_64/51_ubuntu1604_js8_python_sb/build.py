@@ -23,7 +23,7 @@ def base(push=True):
     def shellinabox(d):
         d.cuisine.package.install('shellinabox')
         bin_path = d.cuisine.bash.cmdGetPath('shellinaboxd')
-        d.cuisine.core.file_copy(bin_path, "$binDir")
+        d.cuisine.core.file_copy(bin_path, "$BINDIR")
     # j.sal.btrfs.subvolumeCreate("/storage/jstor")
     # j.sal.btrfs.subvolumeCreate("/storage/builder/sandbox_ub1604")
 

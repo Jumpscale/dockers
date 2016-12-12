@@ -51,7 +51,7 @@ p
 
 # d.cuisine.package.mdupdate()
 
-# d.cuisine.core.file_copy('/usr/local/bin/jspython', '$binDir')
+# d.cuisine.core.file_copy('/usr/local/bin/jspython', '$BINDIR')
 
 sandbox_script = """
 cuisine = j.tools.cuisine.local

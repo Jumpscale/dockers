@@ -42,7 +42,7 @@ url = "http://alpine_controller:8966"
 cmds = [] # empty for long polling from all defined controllers, or specif controllers keys
 
 [extension.jumpscript]
-binary = "$binDir/python3"
+binary = "$BINDIR/python3"
 cwd = "./extensions/jumpscript"
 args = ["wrapper.py", "{domain}", "{name}"]
     [extension.jumpscript.env]
@@ -50,7 +50,7 @@ args = ["wrapper.py", "{domain}", "{name}"]
     PYTHONPATH = "../:$BASEDIR/lib:$BASEDIR/lib/lib-dynload/:$BASEDIR/bin:$BASEDIR/lib/python.zip:$BASEDIR/lib/plat-x86_64-linux-gn"
 
 [extension.jumpscript_content]
-binary = "$binDir/python3"
+binary = "$BINDIR/python3"
 cwd = "./extensions/jumpscript"
 args = ["wrapper_content.py"]
     [extension.jumpscript_content.env]
@@ -58,7 +58,7 @@ args = ["wrapper_content.py"]
     PYTHONPATH = "../:$BASEDIR/lib:$BASEDIR/lib/lib-dynload/:$BASEDIR/bin:$BASEDIR/lib/python.zip:$BASEDIR/lib/plat-x86_64-linux-gn"
 
 [extension.js_daemon]
-binary = "$binDir/python3"
+binary = "$BINDIR/python3"
 cwd = "./extensions/jumpscript"
 args = ["executor.py"]
     [extension.js_daemon.env]
@@ -85,6 +85,6 @@ config = d.cuisine.core.args_replace(template)
 d.cuisine.core.file_write('$JSCFGDIR/core/core.toml', config)
 d.cuisine.core.dir_ensure('$JSCFGDIR/core/conf')
 d.cuisine.core.file_copy('$TEMPLATEDIR/cfg/core/conf/{basic.jumpscripts.toml,basic.syncthing.toml}', '$JSCFGDIR/core/conf')
-cmd = "$binDir/core -gid 1 -nid 1 -c $JSCFGDIR/core/core.toml"
+cmd = "$BINDIR/core -gid 1 -nid 1 -c $JSCFGDIR/core/core.toml"
 
 pm.ensure(name="controller", cmd=cmd, env={}, path=home)
