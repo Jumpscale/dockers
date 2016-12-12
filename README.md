@@ -48,8 +48,8 @@ Select Nr, use comma separation if more e.g. "1,4", * is all, 0 is None: 7,12
 
 
 ```bash
-cd js8/x86_64
-python buildall.py
+cd /opt/code/github/jumpscale/dockers/js8/x86_64
+python3 buildall.py
 ```
 
 ## master builder
@@ -57,6 +57,6 @@ python buildall.py
 on build machine, code will be kept in sync from the developer tools
 
 ```bash
-/opt/code/github/jumpscale/dockers/js8/x86_64/51_ubuntu1604_js8_master_buildscript
+cd /opt/code/github/jumpscale/dockers/js8/x86_64/51_ubuntu1604_js8_master_buildscript
 python3 build.py
 ```
