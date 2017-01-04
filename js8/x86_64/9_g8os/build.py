@@ -28,7 +28,7 @@ cuisine.core.dir_ensure('/var/log/g8os/')
 # binaries
 cuisine.core.file_copy('$BINDIR/core', '/usr/bin/')
 
-sourcepath = "$GODIR/src/github.com/g8os/core"
+sourcepath = "$GOPATHDIR/src/github.com/g8os/core"
 
 cuisine.core.file_copy('%s/init' % (sourcepath), '/usr/bin/init')
 cuisine.core.run('chmod a+x /usr/bin/init')
@@ -57,7 +57,7 @@ cuisine.core.file_copy(
 # corectl
 cuisine.golang.clean_src_path()
 cuisine.golang.get('github.com/g8os/corectl')
-cuisine.core.file_copy('$GODIR/bin/corectl', '/usr/bin/corectl')
+cuisine.core.file_copy('$GOPATHDIR/bin/corectl', '/usr/bin/corectl')
 
 cuisine.core.file_unlink(
     '/etc/g8os/g8os.d/{agetty-ubuntu.toml,modprobe.toml,udev-ubuntu.toml,basic.jumpscripts.toml}')

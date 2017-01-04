@@ -30,7 +30,7 @@ embed()
 p
 
 
-# d.cuisine.core.dir_remove("$GODIR/src/*")
+# d.cuisine.core.dir_remove("$GOPATHDIR/src/*")
 # d.cuisine.core.dir_remove("$TMPDIR/*")
 # d.cuisine.core.dir_remove("$VARDIR/data/*")
 
